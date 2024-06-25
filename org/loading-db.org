@@ -1,0 +1,888 @@
+#+title: Loading DB
+#+PROPERTY: header-args:sql-mode+ :product postgres :wrap "example"
+
+original document: https://github.com/ii/istiosnoop/blob/master/org/loading-db.org
+
+* Introduction
+This is a template org file for working with queries in our apisnoop and infrasnoop databases.
+These are two databases runinng on the same postgres engine, connected in two sessions in this org file.
+
+* APISnoop
+:PROPERTIES:
+:header-args:sql-mode+: :session apisnoop :database apisnoop :dbuser apisnoop
+:END:
+** IMPORTANT
+All sql blocks in here are running in our infrasnoop session.
+However, when starting for the first time, you want to make sure you are putting in the user/db/server prompts correctly.
+They are:
+- user :: apisnoop
+- database :: apisnoop
+- server :: localhost
+
+#+begin_comment
+we should be able to do this in header args, but could not get them working.
+#+end_comment
+
+** Test it works
+#+begin_src sql-mode
+select * from describe_relations();
+#+end_src
+
+#+RESULTS:
+#+begin_example
+   schema    |             name             |                                                description
+-------------+------------------------------+------------------------------------------------------------------------------------------------------------
+ testing     | audit_event                  | every event from an e2e test run, or multiple test runs.
+ testing     | endpoint_hit_by_new_test     |
+ testing     | projected_change_in_coverage |
+ testing     | untested_stable_endpoint     |
+ public      | audit_event                  | every event from an e2e test run, or multiple test runs.
+ public      | audit_event_test             | every test in the audit_log of a release
+ public      | endpoint_coverage            | Coverage info for every endpoint in a release, taken from audit events for that release
+ public      | open_api                     | endpoint details from openAPI spec
+ conformance | coverage_per_release         | How many endopoints from a release are tested today?
+ conformance | eligible_endpoint            | all current stable endpoints for which conformant tests could be written, following conformance guidelines
+ conformance | ineligible_endpoint          | endpoints ineligible for conformance testing
+ conformance | new_endpoint                 | eligible endpoints sorted by release and whether they are tested
+ conformance | progress                     | per release, the # of new, eligible endpoints and coverage ratios
+ conformance | test                         | info for each conformance test, from latest conformance.yaml
+(14 rows)
+
+#+end_example
+
+#+begin_src sql-mode
+select * from load_live_open_api();
+#+end_src
+
+#+RESULTS:
+#+begin_example
+ERROR:  function load_live_open_api() does not exist
+LINE 1: select * from load_live_open_api();
+                      ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+#+end_example
+
+#+begin_src sql-mode
+delete from testing.audit_event;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+DELETE 72268
+#+end_example
+
+#+begin_src sql-mode
+delete from open_api;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+DELETE 1251
+#+end_example
+
+find a statement that works
+
+#+begin_src sql-mode
+begin;
+select
+  'createGatewayNetworkingV1GatewayClass' similar to ('{"standard": "%(Gateway|HTTPRoute)%"}'::jsonb ->> 'standard')
+  and not 'createGatewayNetworkingV1GatewayClass' similar to '%(alpha|beta)%';
+select
+  'deleteGatewayNetworkingV1alpha2CollectionNamespacedBackendTLSPolicy' similar to concat('', '{"standard": "%(Gateway|HTTPRoute)%"}'::jsonb ->> 'standard')
+  and not 'deleteGatewayNetworkingV1alpha2CollectionNamespacedBackendTLSPolicy' similar to '%(alpha|beta)%';
+rollback;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*# apisnoop-*# apisnoop-*#  ?column?
+----------
+ t
+(1 row)
+
+apisnoop=*# apisnoop-*# apisnoop-*#  ?column?
+----------
+ f
+(1 row)
+
+apisnoop=*# ROLLBACK
+#+end_example
+
+#+begin_src sql-mode :session apisnoop
+begin;
+create or replace function load_live_open_api_test (
+  )
+returns text AS $$
+from string import Template
+import json
+import time
+import datetime
+from urllib.request import Request, urlopen, urlretrieve
+import urllib
+import yaml
+import json
+import ssl
+from pathlib import Path
+
+ssl._create_default_https_context = ssl._create_unverified_context
+token = Path('/opt/token.txt').read_text()
+req = Request('https://kubernetes.default.svc/openapi/v2')
+req.add_header('Authorization','Bearer ' + token)
+
+open_api = json.loads(urlopen(req).read().decode('utf-8'))
+release = 'live'
+release_date = time.mktime(datetime.datetime.now().timetuple())
+open_api_url = 'incluster'
+
+levels = {
+       'standard': [
+            'Gateway',
+            'HTTPRoute'
+        ]
+}
+for level in levels:
+  levels[level] = '%(' + '|'.join(levels[level]) + ')%'
+levels = json.dumps(levels)
+
+plpy.info(levels)
+
+sql = Template("""
+   WITH open AS (
+     SELECT '${open_api}'::jsonb as api_data, '${levels}'::jsonb as "levels"
+     )
+       INSERT INTO open_api(
+         release,
+         release_date,
+         endpoint,
+         level
+       )
+   SELECT
+     '${release}' as release,
+     to_timestamp(${release_date}) as release_date,
+     (d.value ->> 'operationId'::text) as endpoint,
+     CASE
+       WHEN not (paths.key ~~ '%alpha%' or paths.key ~~ '%beta%')
+            and (d.value ->> 'operationId'::text) similar to levels::jsonb ->> 'standard'
+                THEN 'standard'
+       ELSE 'experimental'
+     END AS level
+     FROM
+         open
+          , jsonb_each((open.api_data -> 'paths'::text)) paths(key, value)
+          , jsonb_each(paths.value) d(key, value)
+          , jsonb_array_elements((d.value -> 'tags'::text)) cat_tag(value)
+    ORDER BY paths.key;
+              """).substitute(release = release,
+                              release_date = str(release_date),
+                              open_api = json.dumps(open_api).replace("'","''"),
+                              open_api_url = open_api_url,
+                              levels = levels)
+try:
+  plpy.execute((sql))
+  return "{} open api is loaded".format(release)
+except Exception as e:
+  return "an error occurred: " + str(e) + "\nrelease: " + release
+$$ LANGUAGE plpython3u ;
+reset role;
+
+select '{"standard": "%(Gateway|HTTPRoute)%"}'::jsonb ->> 'standard';
+
+delete from open_api;
+select * from load_live_open_api_test();
+
+select distinct(endpoint), level from open_api where endpoint ilike '%gatewaynetworking%' order by endpoint;
+
+rollback;
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*# apisnoop(*# apisnoop-*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# CREATE FUNCTION
+apisnoop=*# RESET
+apisnoop=*# apisnoop=*#        ?column?
+-----------------------
+ %(Gateway|HTTPRoute)%
+(1 row)
+
+apisnoop=*# apisnoop=*# DELETE 1251
+apisnoop=*# INFO:  {"standard": "%(Gateway|HTTPRoute)%"}
+ load_live_open_api_test
+-------------------------
+ live open api is loaded
+(1 row)
+
+apisnoop=*# apisnoop=*#                               endpoint                               |    level
+---------------------------------------------------------------------+--------------
+ createGatewayNetworkingV1alpha2NamespacedBackendLBPolicy            | experimental
+ createGatewayNetworkingV1alpha2NamespacedGRPCRoute                  | experimental
+ createGatewayNetworkingV1alpha2NamespacedReferenceGrant             | experimental
+ createGatewayNetworkingV1alpha2NamespacedTCPRoute                   | experimental
+ createGatewayNetworkingV1alpha2NamespacedTLSRoute                   | experimental
+ createGatewayNetworkingV1alpha2NamespacedUDPRoute                   | experimental
+ createGatewayNetworkingV1alpha3NamespacedBackendTLSPolicy           | experimental
+ createGatewayNetworkingV1beta1GatewayClass                          | experimental
+ createGatewayNetworkingV1beta1NamespacedGateway                     | experimental
+ createGatewayNetworkingV1beta1NamespacedHTTPRoute                   | experimental
+ createGatewayNetworkingV1beta1NamespacedReferenceGrant              | experimental
+ createGatewayNetworkingV1GatewayClass                               | standard
+ createGatewayNetworkingV1NamespacedGateway                          | standard
+ createGatewayNetworkingV1NamespacedGRPCRoute                        | standard
+ createGatewayNetworkingV1NamespacedHTTPRoute                        | standard
+ deleteGatewayNetworkingV1alpha2CollectionNamespacedBackendLBPolicy  | experimental
+ deleteGatewayNetworkingV1alpha2CollectionNamespacedGRPCRoute        | experimental
+ deleteGatewayNetworkingV1alpha2CollectionNamespacedReferenceGrant   | experimental
+ deleteGatewayNetworkingV1alpha2CollectionNamespacedTCPRoute         | experimental
+ deleteGatewayNetworkingV1alpha2CollectionNamespacedTLSRoute         | experimental
+ deleteGatewayNetworkingV1alpha2CollectionNamespacedUDPRoute         | experimental
+ deleteGatewayNetworkingV1alpha2NamespacedBackendLBPolicy            | experimental
+ deleteGatewayNetworkingV1alpha2NamespacedGRPCRoute                  | experimental
+ deleteGatewayNetworkingV1alpha2NamespacedReferenceGrant             | experimental
+ deleteGatewayNetworkingV1alpha2NamespacedTCPRoute                   | experimental
+ deleteGatewayNetworkingV1alpha2NamespacedTLSRoute                   | experimental
+ deleteGatewayNetworkingV1alpha2NamespacedUDPRoute                   | experimental
+ deleteGatewayNetworkingV1alpha3CollectionNamespacedBackendTLSPolicy | experimental
+ deleteGatewayNetworkingV1alpha3NamespacedBackendTLSPolicy           | experimental
+ deleteGatewayNetworkingV1beta1CollectionGatewayClass                | experimental
+ deleteGatewayNetworkingV1beta1CollectionNamespacedGateway           | experimental
+ deleteGatewayNetworkingV1beta1CollectionNamespacedHTTPRoute         | experimental
+ deleteGatewayNetworkingV1beta1CollectionNamespacedReferenceGrant    | experimental
+ deleteGatewayNetworkingV1beta1GatewayClass                          | experimental
+ deleteGatewayNetworkingV1beta1NamespacedGateway                     | experimental
+ deleteGatewayNetworkingV1beta1NamespacedHTTPRoute                   | experimental
+ deleteGatewayNetworkingV1beta1NamespacedReferenceGrant              | experimental
+ deleteGatewayNetworkingV1CollectionGatewayClass                     | standard
+ deleteGatewayNetworkingV1CollectionNamespacedGateway                | standard
+ deleteGatewayNetworkingV1CollectionNamespacedGRPCRoute              | standard
+ deleteGatewayNetworkingV1CollectionNamespacedHTTPRoute              | standard
+ deleteGatewayNetworkingV1GatewayClass                               | standard
+ deleteGatewayNetworkingV1NamespacedGateway                          | standard
+ deleteGatewayNetworkingV1NamespacedGRPCRoute                        | standard
+ deleteGatewayNetworkingV1NamespacedHTTPRoute                        | standard
+ listGatewayNetworkingV1alpha2BackendLBPolicyForAllNamespaces        | experimental
+ listGatewayNetworkingV1alpha2GRPCRouteForAllNamespaces              | experimental
+ listGatewayNetworkingV1alpha2NamespacedBackendLBPolicy              | experimental
+ listGatewayNetworkingV1alpha2NamespacedGRPCRoute                    | experimental
+ listGatewayNetworkingV1alpha2NamespacedReferenceGrant               | experimental
+ listGatewayNetworkingV1alpha2NamespacedTCPRoute                     | experimental
+ listGatewayNetworkingV1alpha2NamespacedTLSRoute                     | experimental
+ listGatewayNetworkingV1alpha2NamespacedUDPRoute                     | experimental
+ listGatewayNetworkingV1alpha2ReferenceGrantForAllNamespaces         | experimental
+ listGatewayNetworkingV1alpha2TCPRouteForAllNamespaces               | experimental
+ listGatewayNetworkingV1alpha2TLSRouteForAllNamespaces               | experimental
+ listGatewayNetworkingV1alpha2UDPRouteForAllNamespaces               | experimental
+ listGatewayNetworkingV1alpha3BackendTLSPolicyForAllNamespaces       | experimental
+ listGatewayNetworkingV1alpha3NamespacedBackendTLSPolicy             | experimental
+ listGatewayNetworkingV1beta1GatewayClass                            | experimental
+ listGatewayNetworkingV1beta1GatewayForAllNamespaces                 | experimental
+ listGatewayNetworkingV1beta1HTTPRouteForAllNamespaces               | experimental
+ listGatewayNetworkingV1beta1NamespacedGateway                       | experimental
+ listGatewayNetworkingV1beta1NamespacedHTTPRoute                     | experimental
+ listGatewayNetworkingV1beta1NamespacedReferenceGrant                | experimental
+ listGatewayNetworkingV1beta1ReferenceGrantForAllNamespaces          | experimental
+ listGatewayNetworkingV1GatewayClass                                 | standard
+ listGatewayNetworkingV1GatewayForAllNamespaces                      | standard
+ listGatewayNetworkingV1GRPCRouteForAllNamespaces                    | standard
+ listGatewayNetworkingV1HTTPRouteForAllNamespaces                    | standard
+ listGatewayNetworkingV1NamespacedGateway                            | standard
+ listGatewayNetworkingV1NamespacedGRPCRoute                          | standard
+ listGatewayNetworkingV1NamespacedHTTPRoute                          | standard
+ patchGatewayNetworkingV1alpha2NamespacedBackendLBPolicy             | experimental
+ patchGatewayNetworkingV1alpha2NamespacedBackendLBPolicyStatus       | experimental
+ patchGatewayNetworkingV1alpha2NamespacedGRPCRoute                   | experimental
+ patchGatewayNetworkingV1alpha2NamespacedReferenceGrant              | experimental
+ patchGatewayNetworkingV1alpha2NamespacedTCPRoute                    | experimental
+ patchGatewayNetworkingV1alpha2NamespacedTCPRouteStatus              | experimental
+ patchGatewayNetworkingV1alpha2NamespacedTLSRoute                    | experimental
+ patchGatewayNetworkingV1alpha2NamespacedTLSRouteStatus              | experimental
+ patchGatewayNetworkingV1alpha2NamespacedUDPRoute                    | experimental
+ patchGatewayNetworkingV1alpha2NamespacedUDPRouteStatus              | experimental
+ patchGatewayNetworkingV1alpha3NamespacedBackendTLSPolicy            | experimental
+ patchGatewayNetworkingV1alpha3NamespacedBackendTLSPolicyStatus      | experimental
+ patchGatewayNetworkingV1beta1GatewayClass                           | experimental
+ patchGatewayNetworkingV1beta1GatewayClassStatus                     | experimental
+ patchGatewayNetworkingV1beta1NamespacedGateway                      | experimental
+ patchGatewayNetworkingV1beta1NamespacedGatewayStatus                | experimental
+ patchGatewayNetworkingV1beta1NamespacedHTTPRoute                    | experimental
+ patchGatewayNetworkingV1beta1NamespacedHTTPRouteStatus              | experimental
+ patchGatewayNetworkingV1beta1NamespacedReferenceGrant               | experimental
+ patchGatewayNetworkingV1GatewayClass                                | standard
+ patchGatewayNetworkingV1GatewayClassStatus                          | standard
+ patchGatewayNetworkingV1NamespacedGateway                           | standard
+ patchGatewayNetworkingV1NamespacedGatewayStatus                     | standard
+ patchGatewayNetworkingV1NamespacedGRPCRoute                         | standard
+ patchGatewayNetworkingV1NamespacedGRPCRouteStatus                   | standard
+ patchGatewayNetworkingV1NamespacedHTTPRoute                         | standard
+ patchGatewayNetworkingV1NamespacedHTTPRouteStatus                   | standard
+ readGatewayNetworkingV1alpha2NamespacedBackendLBPolicy              | experimental
+ readGatewayNetworkingV1alpha2NamespacedBackendLBPolicyStatus        | experimental
+ readGatewayNetworkingV1alpha2NamespacedGRPCRoute                    | experimental
+ readGatewayNetworkingV1alpha2NamespacedReferenceGrant               | experimental
+ readGatewayNetworkingV1alpha2NamespacedTCPRoute                     | experimental
+ readGatewayNetworkingV1alpha2NamespacedTCPRouteStatus               | experimental
+ readGatewayNetworkingV1alpha2NamespacedTLSRoute                     | experimental
+ readGatewayNetworkingV1alpha2NamespacedTLSRouteStatus               | experimental
+ readGatewayNetworkingV1alpha2NamespacedUDPRoute                     | experimental
+ readGatewayNetworkingV1alpha2NamespacedUDPRouteStatus               | experimental
+ readGatewayNetworkingV1alpha3NamespacedBackendTLSPolicy             | experimental
+ readGatewayNetworkingV1alpha3NamespacedBackendTLSPolicyStatus       | experimental
+ readGatewayNetworkingV1beta1GatewayClass                            | experimental
+ readGatewayNetworkingV1beta1GatewayClassStatus                      | experimental
+ readGatewayNetworkingV1beta1NamespacedGateway                       | experimental
+ readGatewayNetworkingV1beta1NamespacedGatewayStatus                 | experimental
+ readGatewayNetworkingV1beta1NamespacedHTTPRoute                     | experimental
+ readGatewayNetworkingV1beta1NamespacedHTTPRouteStatus               | experimental
+ readGatewayNetworkingV1beta1NamespacedReferenceGrant                | experimental
+ readGatewayNetworkingV1GatewayClass                                 | standard
+ readGatewayNetworkingV1GatewayClassStatus                           | standard
+ readGatewayNetworkingV1NamespacedGateway                            | standard
+ readGatewayNetworkingV1NamespacedGatewayStatus                      | standard
+ readGatewayNetworkingV1NamespacedGRPCRoute                          | standard
+ readGatewayNetworkingV1NamespacedGRPCRouteStatus                    | standard
+ readGatewayNetworkingV1NamespacedHTTPRoute                          | standard
+ readGatewayNetworkingV1NamespacedHTTPRouteStatus                    | standard
+ replaceGatewayNetworkingV1alpha2NamespacedBackendLBPolicy           | experimental
+ replaceGatewayNetworkingV1alpha2NamespacedBackendLBPolicyStatus     | experimental
+ replaceGatewayNetworkingV1alpha2NamespacedGRPCRoute                 | experimental
+ replaceGatewayNetworkingV1alpha2NamespacedReferenceGrant            | experimental
+ replaceGatewayNetworkingV1alpha2NamespacedTCPRoute                  | experimental
+ replaceGatewayNetworkingV1alpha2NamespacedTCPRouteStatus            | experimental
+ replaceGatewayNetworkingV1alpha2NamespacedTLSRoute                  | experimental
+ replaceGatewayNetworkingV1alpha2NamespacedTLSRouteStatus            | experimental
+ replaceGatewayNetworkingV1alpha2NamespacedUDPRoute                  | experimental
+ replaceGatewayNetworkingV1alpha2NamespacedUDPRouteStatus            | experimental
+ replaceGatewayNetworkingV1alpha3NamespacedBackendTLSPolicy          | experimental
+ replaceGatewayNetworkingV1alpha3NamespacedBackendTLSPolicyStatus    | experimental
+ replaceGatewayNetworkingV1beta1GatewayClass                         | experimental
+ replaceGatewayNetworkingV1beta1GatewayClassStatus                   | experimental
+ replaceGatewayNetworkingV1beta1NamespacedGateway                    | experimental
+ replaceGatewayNetworkingV1beta1NamespacedGatewayStatus              | experimental
+ replaceGatewayNetworkingV1beta1NamespacedHTTPRoute                  | experimental
+ replaceGatewayNetworkingV1beta1NamespacedHTTPRouteStatus            | experimental
+ replaceGatewayNetworkingV1beta1NamespacedReferenceGrant             | experimental
+ replaceGatewayNetworkingV1GatewayClass                              | standard
+ replaceGatewayNetworkingV1GatewayClassStatus                        | standard
+ replaceGatewayNetworkingV1NamespacedGateway                         | standard
+ replaceGatewayNetworkingV1NamespacedGatewayStatus                   | standard
+ replaceGatewayNetworkingV1NamespacedGRPCRoute                       | standard
+ replaceGatewayNetworkingV1NamespacedGRPCRouteStatus                 | standard
+ replaceGatewayNetworkingV1NamespacedHTTPRoute                       | standard
+ replaceGatewayNetworkingV1NamespacedHTTPRouteStatus                 | standard
+(154 rows)
+
+apisnoop=*# apisnoop=*# ROLLBACK
+#+end_example
+
+create function load_live_open_api
+
+#+begin_src sql-mode :session apisnoop :tangle ./00-load_live_open_api.sql
+begin;
+create or replace function load_live_open_api (
+  )
+returns text AS $$
+from string import Template
+import json
+import time
+import datetime
+from urllib.request import Request, urlopen, urlretrieve
+import urllib
+import yaml
+import ssl
+from pathlib import Path
+
+ssl._create_default_https_context = ssl._create_unverified_context
+token = Path('/opt/token.txt').read_text()
+req = Request('https://kubernetes.default.svc/openapi/v2')
+req.add_header('Authorization','Bearer ' + token)
+
+open_api = json.loads(urlopen(req).read().decode('utf-8'))
+release =  'live'
+release_date = time.mktime(datetime.datetime.now().timetuple())
+open_api_url = 'incluster'
+
+levels = {
+       'standard': [
+            'Gateway',
+            'HTTPRoute'
+        ]
+}
+for level in levels:
+  levels[level] = '%(' + '|'.join(levels[level]) + ')%'
+levels = json.dumps(levels)
+
+sql = Template("""
+   WITH open AS (
+     SELECT '${open_api}'::jsonb as api_data, '${levels}'::jsonb as "levels"
+     )
+       INSERT INTO open_api(
+         release,
+         release_date,
+         endpoint,
+         level,
+         category,
+         path,
+         k8s_group,
+         k8s_version,
+         k8s_kind,
+         k8s_action,
+         deprecated,
+         description,
+         spec
+       )
+   SELECT
+     '${release}' as release,
+     to_timestamp(${release_date}) as release_date,
+     (d.value ->> 'operationId'::text) as endpoint,
+     CASE
+       WHEN not (paths.key ~~ '%alpha%' or paths.key ~~ '%beta%')
+            and (d.value ->> 'operationId'::text) similar to levels::jsonb ->> 'standard'
+                THEN 'standard'
+       ELSE 'experimental'
+     END AS level,
+     split_part((cat_tag.value ->> 0), '_'::text, 1) AS category,
+     paths.key AS path,
+     ((d.value -> 'x-kubernetes-group-version-kind'::text) ->> 'group'::text) AS k8s_group,
+     ((d.value -> 'x-kubernetes-group-version-kind'::text) ->> 'version'::text) AS k8s_version,
+     ((d.value -> 'x-kubernetes-group-version-kind'::text) ->> 'kind'::text) AS k8s_kind,
+     (d.value ->> 'x-kubernetes-action'::text) AS k8s_action,
+     CASE
+       WHEN (lower((d.value ->> 'description'::text)) ~~ '%deprecated%'::text) THEN true
+       ELSE false
+     END AS deprecated,
+                 (d.value ->> 'description'::text) AS description,
+                 '${open_api_url}' as spec
+     FROM
+         open
+          , jsonb_each((open.api_data -> 'paths'::text)) paths(key, value)
+          , jsonb_each(paths.value) d(key, value)
+          , jsonb_array_elements((d.value -> 'tags'::text)) cat_tag(value)
+    ORDER BY paths.key;
+              """).substitute(release = release,
+                              release_date = str(release_date),
+                              open_api = json.dumps(open_api).replace("'","''"),
+                              open_api_url = open_api_url,
+                              levels = levels)
+try:
+  plpy.execute((sql))
+  return "{} open api is loaded".format(release)
+except Exception as e:
+  return "an error occurred: " + str(e) + "\nrelease: " + release
+$$ LANGUAGE plpython3u ;
+reset role;
+
+comment on function load_live_open_api is 'loads given release to open_api table from incluster api spec.';
+
+select 'load_live_open_api function defined and commented' as "build log";
+commit;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*# apisnoop(*# apisnoop-*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# CREATE FUNCTION
+apisnoop=*# RESET
+apisnoop=*# apisnoop=*# COMMENT
+apisnoop=*# apisnoop=*#                      build log
+---------------------------------------------------
+ load_live_open_api function defined and commented
+(1 row)
+
+apisnoop=*# COMMIT
+#+end_example
+
+#+begin_src sql-mode
+\df public.load_live_open_api
+#+end_src
+
+#+RESULTS:
+#+begin_example
+                              List of functions
+ Schema |        Name        | Result data type | Argument data types | Type
+--------+--------------------+------------------+---------------------+------
+ public | load_live_open_api | text             |                     | func
+(1 row)
+
+#+end_example
+
+#+begin_src sql-mode :tangle ./00-load_live_open_api.sql
+select * from load_live_open_api();
+#+end_src
+
+#+RESULTS:
+#+begin_example
+   load_live_open_api
+-------------------------
+ live open api is loaded
+(1 row)
+
+#+end_example
+
+** Looking at Gateway-API Endpoints
+Our database is connected to a cluster with gateway-api resource definitions, and configured for auditing.  All audit events are logged by apisnoop and inserted
+into the testing.audit_event table, with endpoints connected based on the openapi spec generated by this cluster.
+
+So we can see all the gateway-api endpoints in the audit_event table with
+
+#+begin_src sql-mode
+begin;
+select distinct(endpoint), release
+  from testing.audit_event
+where endpoint ilike '%gatewaynetworking%';
+rollback;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*# apisnoop-*# apisnoop-*#                               endpoint                               | release
+---------------------------------------------------------------------+---------
+ createGatewayNetworkingV1alpha2NamespacedTLSRoute                   | live
+ createGatewayNetworkingV1beta1NamespacedGateway                     | live
+ createGatewayNetworkingV1beta1NamespacedHTTPRoute                   | live
+ createGatewayNetworkingV1beta1NamespacedReferenceGrant              | live
+ createGatewayNetworkingV1GatewayClass                               | live
+ createGatewayNetworkingV1NamespacedGateway                          | live
+ createGatewayNetworkingV1NamespacedHTTPRoute                        | live
+ deleteGatewayNetworkingV1alpha2CollectionNamespacedBackendLBPolicy  | live
+ deleteGatewayNetworkingV1alpha2CollectionNamespacedTCPRoute         | live
+ deleteGatewayNetworkingV1alpha2CollectionNamespacedTLSRoute         | live
+ deleteGatewayNetworkingV1alpha2CollectionNamespacedUDPRoute         | live
+ deleteGatewayNetworkingV1alpha2NamespacedTLSRoute                   | live
+ deleteGatewayNetworkingV1alpha3CollectionNamespacedBackendTLSPolicy | live
+ deleteGatewayNetworkingV1beta1CollectionNamespacedReferenceGrant    | live
+ deleteGatewayNetworkingV1beta1NamespacedGateway                     | live
+ deleteGatewayNetworkingV1beta1NamespacedHTTPRoute                   | live
+ deleteGatewayNetworkingV1beta1NamespacedReferenceGrant              | live
+ deleteGatewayNetworkingV1CollectionNamespacedGateway                | live
+ deleteGatewayNetworkingV1CollectionNamespacedGRPCRoute              | live
+ deleteGatewayNetworkingV1CollectionNamespacedHTTPRoute              | live
+ deleteGatewayNetworkingV1GatewayClass                               | live
+ deleteGatewayNetworkingV1NamespacedGateway                          | live
+ deleteGatewayNetworkingV1NamespacedHTTPRoute                        | live
+ listGatewayNetworkingV1alpha2BackendLBPolicyForAllNamespaces        | live
+ listGatewayNetworkingV1alpha2NamespacedBackendLBPolicy              | live
+ listGatewayNetworkingV1alpha2NamespacedTCPRoute                     | live
+ listGatewayNetworkingV1alpha2NamespacedTLSRoute                     | live
+ listGatewayNetworkingV1alpha2NamespacedUDPRoute                     | live
+ listGatewayNetworkingV1alpha2TCPRouteForAllNamespaces               | live
+ listGatewayNetworkingV1alpha2TLSRouteForAllNamespaces               | live
+ listGatewayNetworkingV1alpha2UDPRouteForAllNamespaces               | live
+ listGatewayNetworkingV1alpha3BackendTLSPolicyForAllNamespaces       | live
+ listGatewayNetworkingV1alpha3NamespacedBackendTLSPolicy             | live
+ listGatewayNetworkingV1beta1GatewayClass                            | live
+ listGatewayNetworkingV1beta1GatewayForAllNamespaces                 | live
+ listGatewayNetworkingV1beta1HTTPRouteForAllNamespaces               | live
+ listGatewayNetworkingV1beta1NamespacedReferenceGrant                | live
+ listGatewayNetworkingV1beta1ReferenceGrantForAllNamespaces          | live
+ listGatewayNetworkingV1GatewayClass                                 | live
+ listGatewayNetworkingV1GatewayForAllNamespaces                      | live
+ listGatewayNetworkingV1GRPCRouteForAllNamespaces                    | live
+ listGatewayNetworkingV1HTTPRouteForAllNamespaces                    | live
+ listGatewayNetworkingV1NamespacedGateway                            | live
+ listGatewayNetworkingV1NamespacedGRPCRoute                          | live
+ listGatewayNetworkingV1NamespacedHTTPRoute                          | live
+ patchGatewayNetworkingV1beta1NamespacedGateway                      | live
+ patchGatewayNetworkingV1GatewayClass                                | live
+ patchGatewayNetworkingV1NamespacedGateway                           | live
+ patchGatewayNetworkingV1NamespacedHTTPRoute                         | live
+ readGatewayNetworkingV1alpha2NamespacedTLSRoute                     | live
+ readGatewayNetworkingV1beta1NamespacedGateway                       | live
+ readGatewayNetworkingV1beta1NamespacedHTTPRoute                     | live
+ readGatewayNetworkingV1beta1NamespacedReferenceGrant                | live
+ readGatewayNetworkingV1GatewayClass                                 | live
+ readGatewayNetworkingV1NamespacedGateway                            | live
+ readGatewayNetworkingV1NamespacedHTTPRoute                          | live
+ replaceGatewayNetworkingV1beta1GatewayClassStatus                   | live
+ replaceGatewayNetworkingV1beta1NamespacedGatewayStatus              | live
+ replaceGatewayNetworkingV1beta1NamespacedHTTPRouteStatus            | live
+(59 rows)
+
+apisnoop=*# ROLLBACK
+#+end_example
+
+#+begin_src sql-mode
+select count(*) from testing.audit_event;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+ count
+--------
+ 345886
+(1 row)
+
+#+end_example
+
+however, there aren't any showing up with that endpoint name
+
+#+begin_src sql-mode
+\d testing.audit_event
+#+end_src
+
+#+RESULTS:
+#+begin_example
+                                 Unlogged table "testing.audit_event"
+    Column     |            Type             | Collation | Nullable |             Default
+---------------+-----------------------------+-----------+----------+----------------------------------
+ release       | text                        |           |          |
+ release_date  | text                        |           |          |
+ audit_id      | text                        |           | not null |
+ endpoint      | text                        |           |          |
+ useragent     | text                        |           |          |
+ test          | text                        |           |          |
+ test_hit      | boolean                     |           |          |
+ conf_test_hit | boolean                     |           |          |
+ data          | jsonb                       |           | not null |
+ source        | text                        |           |          |
+ id            | integer                     |           | not null | generated by default as identity
+ ingested_at   | timestamp without time zone |           |          | CURRENT_TIMESTAMP
+Indexes:
+    "audit_event_pkey" PRIMARY KEY, btree (id)
+Triggers:
+    add_endpoint BEFORE INSERT ON testing.audit_event FOR EACH ROW EXECUTE FUNCTION determine_endpoint()
+
+#+end_example
+
+perhaps there are some showing up with this query while running tests
+
+#+begin_src sql-mode
+begin;
+select distinct(endpoint)
+from testing.audit_event
+where useragent SIMILAR TO '(pilot.test|gateway-api.test|conformance.test|live)%'
+and endpoint ilike '%gatewaynetworking%';
+rollback;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*# apisnoop-*# apisnoop-*# apisnoop-*#                     endpoint
+-------------------------------------------------
+ createGatewayNetworkingV1beta1NamespacedGateway
+ listGatewayNetworkingV1NamespacedGateway
+ readGatewayNetworkingV1beta1NamespacedGateway
+ readGatewayNetworkingV1GatewayClass
+(4 rows)
+
+apisnoop=*# ROLLBACK
+#+end_example
+
+#+begin_src sql-mode
+begin;
+select distinct data->>'verb' as verb, data->>'requestURI' as "requestURI", useragent from testing.audit_event where data->>'requestURI' ilike '%gateway.networking%' and data->>'verb' not ilike 'watch' limit 20;
+rollback;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*#   verb  |                                                           requestURI                                                           |                                                          useragent
+--------+--------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------
+ create | /apis/gateway.networking.k8s.io/v1beta1/namespaces/gateway-conformance-infra/gateways                                          | conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format
+ create | /apis/gateway.networking.k8s.io/v1/namespaces/gateway-conformance-infra/gateways                                               | gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway
+ create | /apis/gateway.networking.k8s.io/v1/namespaces/gateway-conformance-infra/gateways                                               | gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidTLSConfiguration::Gateway
+ delete | /apis/gateway.networking.k8s.io/v1/namespaces/gateway-conformance-infra/gateways/gateway-only-invalid-route-kind               | gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway
+ delete | /apis/gateway.networking.k8s.io/v1/namespaces/gateway-conformance-infra/gateways/gateway-supported-and-invalid-route-kind      | gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway
+ get    | /apis/gateway.networking.k8s.io/v1                                                                                             | conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format
+ get    | /apis/gateway.networking.k8s.io/v1                                                                                             | gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway
+ get    | /apis/gateway.networking.k8s.io/v1                                                                                             | gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidTLSConfiguration::Gateway
+ get    | /apis/gateway.networking.k8s.io/v1beta1                                                                                        | conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format
+ get    | /apis/gateway.networking.k8s.io/v1beta1/namespaces/gateway-conformance-infra/gateways/all-namespaces                           | conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format
+ get    | /apis/gateway.networking.k8s.io/v1beta1/namespaces/gateway-conformance-infra/gateways/all-namespaces                           | kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:generic-garbage-collector
+ get    | /apis/gateway.networking.k8s.io/v1beta1/namespaces/gateway-conformance-infra/gateways/backend-namespaces                       | conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format
+ get    | /apis/gateway.networking.k8s.io/v1beta1/namespaces/gateway-conformance-infra/gateways/backend-namespaces                       | kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:generic-garbage-collector
+ get    | /apis/gateway.networking.k8s.io/v1beta1/namespaces/gateway-conformance-infra/gateways/gateway-certificate-malformed-secret     | kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:generic-garbage-collector
+ get    | /apis/gateway.networking.k8s.io/v1beta1/namespaces/gateway-conformance-infra/gateways/gateway-certificate-nonexistent-secret   | kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:generic-garbage-collector
+ get    | /apis/gateway.networking.k8s.io/v1beta1/namespaces/gateway-conformance-infra/gateways/gateway-certificate-unsupported-group    | kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:generic-garbage-collector
+ get    | /apis/gateway.networking.k8s.io/v1beta1/namespaces/gateway-conformance-infra/gateways/gateway-certificate-unsupported-kind     | kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:generic-garbage-collector
+ get    | /apis/gateway.networking.k8s.io/v1beta1/namespaces/gateway-conformance-infra/gateways/gateway-only-invalid-route-kind          | kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:generic-garbage-collector
+ get    | /apis/gateway.networking.k8s.io/v1beta1/namespaces/gateway-conformance-infra/gateways/gateway-supported-and-invalid-route-kind | kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:generic-garbage-collector
+ get    | /apis/gateway.networking.k8s.io/v1beta1/namespaces/gateway-conformance-infra/gateways/same-namespace                           | conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format
+(20 rows)
+
+apisnoop=*# ROLLBACK
+#+end_example
+
+** Getting additional detail from incluster spec
+We have a function ~load_live_open_api~, that adds a 'live' release to our open_api table, populated with the incluster spec.
+I already ran it to populate the table, so now we can join our testing events to this spec to get additional details.
+
+for example:
+
+#+begin_src sql-mode
+with gatewayapi_eps as (
+  select endpoint,useragent,data
+    from testing.audit_event
+   where endpoint ilike '%gatewaynetworking%'
+)
+select endpoint, description, useragent, path
+  from gatewayapi_eps
+       join open_api using(endpoint)
+ group by endpoint,description,useragent,path
+ limit 10;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+                        endpoint                        |       description       |                                                  useragent                                                  |                                      path
+--------------------------------------------------------+-------------------------+-------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------
+ createGatewayNetworkingV1alpha2NamespacedTLSRoute      | create a TLSRoute       | gateway-api-conformance.test::v1.2.0-dev::TLSRouteInvalidReferenceGrant::Gateway,TLSRoute,ReferenceGrant    | /apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/tlsroutes
+ createGatewayNetworkingV1alpha2NamespacedTLSRoute      | create a TLSRoute       | gateway-api-conformance.test::v1.2.0-dev::TLSRouteSimpleSameNamespace::Gateway,TLSRoute                     | /apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/tlsroutes
+ createGatewayNetworkingV1beta1NamespacedGateway        | create a Gateway        | conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format                                                    | /apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/gateways
+ createGatewayNetworkingV1beta1NamespacedGateway        | create a Gateway        | gateway-api-conformance.test::v1.2.0-dev::GatewayWithAttachedRoutes::Gateway,HTTPRoute                      | /apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/gateways
+ createGatewayNetworkingV1beta1NamespacedGateway        | create a Gateway        | gateway-api-conformance.test::v1.2.0-dev::TLSRouteInvalidReferenceGrant::Gateway,TLSRoute,ReferenceGrant    | /apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/gateways
+ createGatewayNetworkingV1beta1NamespacedGateway        | create a Gateway        | gateway-api-conformance.test::v1.2.0-dev::TLSRouteSimpleSameNamespace::Gateway,TLSRoute                     | /apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/gateways
+ createGatewayNetworkingV1beta1NamespacedHTTPRoute      | create a HTTPRoute      | gateway-api-conformance.test::v1.2.0-dev::GatewayWithAttachedRoutes::Gateway,HTTPRoute                      | /apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/httproutes
+ createGatewayNetworkingV1beta1NamespacedReferenceGrant | create a ReferenceGrant | gateway-api-conformance.test::v1.2.0-dev::GatewaySecretInvalidReferenceGrant::Gateway,ReferenceGrant        | /apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/referencegrants
+ createGatewayNetworkingV1beta1NamespacedReferenceGrant | create a ReferenceGrant | gateway-api-conformance.test::v1.2.0-dev::GatewaySecretReferenceGrantAllInNamespace::Gateway,ReferenceGrant | /apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/referencegrants
+ createGatewayNetworkingV1beta1NamespacedReferenceGrant | create a ReferenceGrant | gateway-api-conformance.test::v1.2.0-dev::GatewaySecretReferenceGrantSpecific::Gateway,ReferenceGrant       | /apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/referencegrants
+(10 rows)
+
+#+end_example
+
+find the distinct useragents
+
+#+begin_src sql-mode
+begin;
+select distinct(useragent)
+from testing.audit_event
+where useragent ilike 'gateway-api-conformance.test%';
+rollback;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*# apisnoop-*# apisnoop-*#                                                                       useragent
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+ gateway-api-conformance.test::v1.2.0-dev::GatewayClassObservedGenerationBump::Gateway
+ gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway
+ gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidTLSConfiguration::Gateway
+ gateway-api-conformance.test::v1.2.0-dev::GatewayModifyListeners::Gateway
+ gateway-api-conformance.test::v1.2.0-dev::GatewayObservedGenerationBump::Gateway
+ gateway-api-conformance.test::v1.2.0-dev::GatewaySecretInvalidReferenceGrant::Gateway,ReferenceGrant
+ gateway-api-conformance.test::v1.2.0-dev::GatewaySecretMissingReferenceGrant::Gateway,ReferenceGrant
+ gateway-api-conformance.test::v1.2.0-dev::GatewaySecretReferenceGrantAllInNamespace::Gateway,ReferenceGrant
+ gateway-api-conformance.test::v1.2.0-dev::GatewaySecretReferenceGrantSpecific::Gateway,ReferenceGrant
+ gateway-api-conformance.test::v1.2.0-dev::GatewayWithAttachedRoutes::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteCrossNamespace::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteDisallowedKind::Gateway,HTTPRoute,TLSRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteExactPathMatching::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteHeaderMatching::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteHostnameIntersection::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteHTTPSListener::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteInvalidBackendRefUnknownKind::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteInvalidCrossNamespaceBackendRef::Gateway,HTTPRoute,ReferenceGrant
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteInvalidCrossNamespaceParentRef::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteInvalidNonExistentBackendRef::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteInvalidParentRefNotMatchingListenerPort::Gateway,HTTPRoute,HTTPRouteDestinationPortMatching
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteInvalidParentRefNotMatchingSectionName::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteInvalidReferenceGrant::Gateway,HTTPRoute,ReferenceGrant
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteListenerHostnameMatching::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteMatchingAcrossRoutes::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteMatching::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteMethodMatching::Gateway,HTTPRoute,HTTPRouteMethodMatching
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteObservedGenerationBump::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRoutePartiallyInvalidViaInvalidReferenceGrant::Gateway,HTTPRoute,ReferenceGrant
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRoutePathMatchOrder::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteQueryParamMatching::Gateway,HTTPRoute,HTTPRouteQueryParamMatching
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRedirectHostAndStatus::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRedirectPath::Gateway,HTTPRoute,HTTPRoutePathRedirect
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRedirectPort::Gateway,HTTPRoute,HTTPRoutePortRedirect
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRedirectScheme::Gateway,HTTPRoute,HTTPRouteSchemeRedirect
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteReferenceGrant::Gateway,HTTPRoute,ReferenceGrant
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRequestHeaderModifier::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRequestMirror::Gateway,HTTPRoute,HTTPRouteRequestMirror
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRequestMultipleMirrors::Gateway,HTTPRoute,HTTPRouteRequestMirror,HTTPRouteRequestMultipleMirrors
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteResponseHeaderModifier::Gateway,HTTPRoute,HTTPRouteResponseHeaderModification
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRewriteHost::Gateway,HTTPRoute,HTTPRouteHostRewrite
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRewritePath::Gateway,HTTPRoute,HTTPRoutePathRewrite
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteServiceTypes::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteSimpleSameNamespace::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::HTTPRouteWeight::Gateway,HTTPRoute
+ gateway-api-conformance.test::v1.2.0-dev::TLSRouteInvalidReferenceGrant::Gateway,TLSRoute,ReferenceGrant
+ gateway-api-conformance.test::v1.2.0-dev::TLSRouteSimpleSameNamespace::Gateway,TLSRoute
+(47 rows)
+
+apisnoop=*# ROLLBACK
+#+end_example
+
+#+begin_src sql-mode
+begin;
+select distinct(endpoint), release
+  from testing.audit_event
+where endpoint ilike '%gateway%';
+rollback;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*# apisnoop-*# apisnoop-*#                               endpoint                               | release
+---------------------------------------------------------------------+---------
+ createGatewayNetworkingV1alpha2NamespacedTLSRoute                   | live
+ createGatewayNetworkingV1beta1NamespacedGateway                     | live
+ createGatewayNetworkingV1beta1NamespacedHTTPRoute                   | live
+ createGatewayNetworkingV1beta1NamespacedReferenceGrant              | live
+ createGatewayNetworkingV1GatewayClass                               | live
+ createGatewayNetworkingV1NamespacedGateway                          | live
+ createGatewayNetworkingV1NamespacedHTTPRoute                        | live
+ deleteGatewayNetworkingV1alpha2CollectionNamespacedBackendLBPolicy  | live
+ deleteGatewayNetworkingV1alpha2CollectionNamespacedTCPRoute         | live
+ deleteGatewayNetworkingV1alpha2CollectionNamespacedTLSRoute         | live
+ deleteGatewayNetworkingV1alpha2CollectionNamespacedUDPRoute         | live
+ deleteGatewayNetworkingV1alpha2NamespacedTLSRoute                   | live
+ deleteGatewayNetworkingV1alpha3CollectionNamespacedBackendTLSPolicy | live
+ deleteGatewayNetworkingV1beta1CollectionNamespacedReferenceGrant    | live
+ deleteGatewayNetworkingV1beta1NamespacedGateway                     | live
+ deleteGatewayNetworkingV1beta1NamespacedHTTPRoute                   | live
+ deleteGatewayNetworkingV1beta1NamespacedReferenceGrant              | live
+ deleteGatewayNetworkingV1CollectionNamespacedGateway                | live
+ deleteGatewayNetworkingV1CollectionNamespacedGRPCRoute              | live
+ deleteGatewayNetworkingV1CollectionNamespacedHTTPRoute              | live
+ deleteGatewayNetworkingV1GatewayClass                               | live
+ deleteGatewayNetworkingV1NamespacedGateway                          | live
+ deleteGatewayNetworkingV1NamespacedHTTPRoute                        | live
+ listGatewayNetworkingV1alpha2BackendLBPolicyForAllNamespaces        | live
+ listGatewayNetworkingV1alpha2NamespacedBackendLBPolicy              | live
+ listGatewayNetworkingV1alpha2NamespacedTCPRoute                     | live
+ listGatewayNetworkingV1alpha2NamespacedTLSRoute                     | live
+ listGatewayNetworkingV1alpha2NamespacedUDPRoute                     | live
+ listGatewayNetworkingV1alpha2TCPRouteForAllNamespaces               | live
+ listGatewayNetworkingV1alpha2TLSRouteForAllNamespaces               | live
+ listGatewayNetworkingV1alpha2UDPRouteForAllNamespaces               | live
+ listGatewayNetworkingV1alpha3BackendTLSPolicyForAllNamespaces       | live
+ listGatewayNetworkingV1alpha3NamespacedBackendTLSPolicy             | live
+ listGatewayNetworkingV1beta1GatewayClass                            | live
+ listGatewayNetworkingV1beta1GatewayForAllNamespaces                 | live
+ listGatewayNetworkingV1beta1HTTPRouteForAllNamespaces               | live
+ listGatewayNetworkingV1beta1NamespacedReferenceGrant                | live
+ listGatewayNetworkingV1beta1ReferenceGrantForAllNamespaces          | live
+ listGatewayNetworkingV1GatewayClass                                 | live
+ listGatewayNetworkingV1GatewayForAllNamespaces                      | live
+ listGatewayNetworkingV1GRPCRouteForAllNamespaces                    | live
+ listGatewayNetworkingV1HTTPRouteForAllNamespaces                    | live
+ listGatewayNetworkingV1NamespacedGateway                            | live
+ listGatewayNetworkingV1NamespacedGRPCRoute                          | live
+ listGatewayNetworkingV1NamespacedHTTPRoute                          | live
+ patchGatewayNetworkingV1beta1NamespacedGateway                      | live
+ patchGatewayNetworkingV1GatewayClass                                | live
+ patchGatewayNetworkingV1NamespacedGateway                           | live
+ patchGatewayNetworkingV1NamespacedHTTPRoute                         | live
+ readGatewayNetworkingV1alpha2NamespacedTLSRoute                     | live
+ readGatewayNetworkingV1beta1NamespacedGateway                       | live
+ readGatewayNetworkingV1beta1NamespacedHTTPRoute                     | live
+ readGatewayNetworkingV1beta1NamespacedReferenceGrant                | live
+ readGatewayNetworkingV1GatewayClass                                 | live
+ readGatewayNetworkingV1NamespacedGateway                            | live
+ readGatewayNetworkingV1NamespacedHTTPRoute                          | live
+ replaceGatewayNetworkingV1beta1GatewayClassStatus                   | live
+ replaceGatewayNetworkingV1beta1NamespacedGatewayStatus              | live
+ replaceGatewayNetworkingV1beta1NamespacedHTTPRouteStatus            | live
+(59 rows)
+
+apisnoop=*# ROLLBACK
+#+end_example
