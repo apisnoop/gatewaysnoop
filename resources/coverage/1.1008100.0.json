@@ -1,0 +1,436 @@
+{
+    "spec": "incluster",
+    "tests": null,
+    "release": "1.1008100.0",
+    "sources": ["https://github.com/apisnoop/gateway-api-test-framework/"],
+    "endpoints": [
+        {
+            "kind": "GatewayClass",
+            "path": "/apis/gateway.networking.k8s.io/v1/gatewayclasses",
+            "group": "gateway.networking.k8s.io",
+            "level": "stable",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "post",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1",
+            "category": "gatewayNetworking",
+            "endpoint": "createGatewayNetworkingV1GatewayClass",
+            "conf_tested": true,
+            "description": "create a GatewayClass"
+        },
+        {
+            "kind": "Gateway",
+            "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/gateways",
+            "group": "gateway.networking.k8s.io",
+            "level": "stable",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "post",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1",
+            "category": "gatewayNetworking",
+            "endpoint": "createGatewayNetworkingV1NamespacedGateway",
+            "conf_tested": true,
+            "description": "create a Gateway"
+        },
+        {
+            "kind": "HTTPRoute",
+            "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/httproutes",
+            "group": "gateway.networking.k8s.io",
+            "level": "stable",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "post",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1",
+            "category": "gatewayNetworking",
+            "endpoint": "createGatewayNetworkingV1NamespacedHTTPRoute",
+            "conf_tested": true,
+            "description": "create a HTTPRoute"
+        },
+        {
+            "kind": "GatewayClass",
+            "path": "/apis/gateway.networking.k8s.io/v1/gatewayclasses/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "stable",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "delete",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1",
+            "category": "gatewayNetworking",
+            "endpoint": "deleteGatewayNetworkingV1GatewayClass",
+            "conf_tested": true,
+            "description": "delete a GatewayClass"
+        },
+        {
+            "kind": "Gateway",
+            "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/gateways/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "stable",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "delete",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1",
+            "category": "gatewayNetworking",
+            "endpoint": "deleteGatewayNetworkingV1NamespacedGateway",
+            "conf_tested": true,
+            "description": "delete a Gateway"
+        },
+        {
+            "kind": "HTTPRoute",
+            "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/httproutes/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "stable",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "delete",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1",
+            "category": "gatewayNetworking",
+            "endpoint": "deleteGatewayNetworkingV1NamespacedHTTPRoute",
+            "conf_tested": true,
+            "description": "delete a HTTPRoute"
+        },
+        {
+            "kind": "Gateway",
+            "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/gateways",
+            "group": "gateway.networking.k8s.io",
+            "level": "stable",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "list",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1",
+            "category": "gatewayNetworking",
+            "endpoint": "listGatewayNetworkingV1NamespacedGateway",
+            "conf_tested": true,
+            "description": "list objects of kind Gateway"
+        },
+        {
+            "kind": "GatewayClass",
+            "path": "/apis/gateway.networking.k8s.io/v1/gatewayclasses/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "stable",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "patch",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1",
+            "category": "gatewayNetworking",
+            "endpoint": "patchGatewayNetworkingV1GatewayClass",
+            "conf_tested": true,
+            "description": "partially update the specified GatewayClass"
+        },
+        {
+            "kind": "Gateway",
+            "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/gateways/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "stable",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "patch",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1",
+            "category": "gatewayNetworking",
+            "endpoint": "patchGatewayNetworkingV1NamespacedGateway",
+            "conf_tested": true,
+            "description": "partially update the specified Gateway"
+        },
+        {
+            "kind": "HTTPRoute",
+            "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/httproutes/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "stable",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "patch",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1",
+            "category": "gatewayNetworking",
+            "endpoint": "patchGatewayNetworkingV1NamespacedHTTPRoute",
+            "conf_tested": true,
+            "description": "partially update the specified HTTPRoute"
+        },
+        {
+            "kind": "GatewayClass",
+            "path": "/apis/gateway.networking.k8s.io/v1/gatewayclasses/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "stable",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "get",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1",
+            "category": "gatewayNetworking",
+            "endpoint": "readGatewayNetworkingV1GatewayClass",
+            "conf_tested": true,
+            "description": "read the specified GatewayClass"
+        },
+        {
+            "kind": "Gateway",
+            "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/gateways/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "stable",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "get",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1",
+            "category": "gatewayNetworking",
+            "endpoint": "readGatewayNetworkingV1NamespacedGateway",
+            "conf_tested": true,
+            "description": "read the specified Gateway"
+        },
+        {
+            "kind": "HTTPRoute",
+            "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/httproutes/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "stable",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "get",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1",
+            "category": "gatewayNetworking",
+            "endpoint": "readGatewayNetworkingV1NamespacedHTTPRoute",
+            "conf_tested": true,
+            "description": "read the specified HTTPRoute"
+        },
+        {
+            "kind": "Gateway",
+            "path": "/apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/gateways",
+            "group": "gateway.networking.k8s.io",
+            "level": "beta",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "post",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1beta1",
+            "category": "gatewayNetworking",
+            "endpoint": "createGatewayNetworkingV1beta1NamespacedGateway",
+            "conf_tested": true,
+            "description": "create a Gateway"
+        },
+        {
+            "kind": "HTTPRoute",
+            "path": "/apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/httproutes",
+            "group": "gateway.networking.k8s.io",
+            "level": "beta",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "post",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1beta1",
+            "category": "gatewayNetworking",
+            "endpoint": "createGatewayNetworkingV1beta1NamespacedHTTPRoute",
+            "conf_tested": true,
+            "description": "create a HTTPRoute"
+        },
+        {
+            "kind": "ReferenceGrant",
+            "path": "/apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/referencegrants",
+            "group": "gateway.networking.k8s.io",
+            "level": "beta",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "post",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1beta1",
+            "category": "gatewayNetworking",
+            "endpoint": "createGatewayNetworkingV1beta1NamespacedReferenceGrant",
+            "conf_tested": true,
+            "description": "create a ReferenceGrant"
+        },
+        {
+            "kind": "Gateway",
+            "path": "/apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/gateways/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "beta",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "delete",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1beta1",
+            "category": "gatewayNetworking",
+            "endpoint": "deleteGatewayNetworkingV1beta1NamespacedGateway",
+            "conf_tested": true,
+            "description": "delete a Gateway"
+        },
+        {
+            "kind": "HTTPRoute",
+            "path": "/apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/httproutes/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "beta",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "delete",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1beta1",
+            "category": "gatewayNetworking",
+            "endpoint": "deleteGatewayNetworkingV1beta1NamespacedHTTPRoute",
+            "conf_tested": true,
+            "description": "delete a HTTPRoute"
+        },
+        {
+            "kind": "ReferenceGrant",
+            "path": "/apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/referencegrants/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "beta",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "delete",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1beta1",
+            "category": "gatewayNetworking",
+            "endpoint": "deleteGatewayNetworkingV1beta1NamespacedReferenceGrant",
+            "conf_tested": true,
+            "description": "delete a ReferenceGrant"
+        },
+        {
+            "kind": "Gateway",
+            "path": "/apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/gateways/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "beta",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "get",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1beta1",
+            "category": "gatewayNetworking",
+            "endpoint": "readGatewayNetworkingV1beta1NamespacedGateway",
+            "conf_tested": true,
+            "description": "read the specified Gateway"
+        },
+        {
+            "kind": "HTTPRoute",
+            "path": "/apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/httproutes/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "beta",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "get",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1beta1",
+            "category": "gatewayNetworking",
+            "endpoint": "readGatewayNetworkingV1beta1NamespacedHTTPRoute",
+            "conf_tested": true,
+            "description": "read the specified HTTPRoute"
+        },
+        {
+            "kind": "ReferenceGrant",
+            "path": "/apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/referencegrants/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "beta",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "get",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1beta1",
+            "category": "gatewayNetworking",
+            "endpoint": "readGatewayNetworkingV1beta1NamespacedReferenceGrant",
+            "conf_tested": true,
+            "description": "read the specified ReferenceGrant"
+        },
+        {
+            "kind": "TLSRoute",
+            "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/tlsroutes",
+            "group": "gateway.networking.k8s.io",
+            "level": "alpha",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "post",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1alpha2",
+            "category": "gatewayNetworking",
+            "endpoint": "createGatewayNetworkingV1alpha2NamespacedTLSRoute",
+            "conf_tested": true,
+            "description": "create a TLSRoute"
+        },
+        {
+            "kind": "TLSRoute",
+            "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/tlsroutes/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "alpha",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "delete",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1alpha2",
+            "category": "gatewayNetworking",
+            "endpoint": "deleteGatewayNetworkingV1alpha2NamespacedTLSRoute",
+            "conf_tested": true,
+            "description": "delete a TLSRoute"
+        },
+        {
+            "kind": "TLSRoute",
+            "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/tlsroutes/{name}",
+            "group": "gateway.networking.k8s.io",
+            "level": "alpha",
+            "tests": [
+                "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+            ],
+            "action": "get",
+            "tested": true,
+            "release": "1.1008100.0",
+            "version": "v1alpha2",
+            "category": "gatewayNetworking",
+            "endpoint": "readGatewayNetworkingV1alpha2NamespacedTLSRoute",
+            "conf_tested": true,
+            "description": "read the specified TLSRoute"
+        }
+    ],
+    "release_date": "2024-07-01T21:59:11",
+    "total endpoints": 25,
+    "tested endpoints": 25
+}
