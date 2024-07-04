@@ -4,6 +4,9 @@
     - gatewayapi: "v1.0.0"
       version: "v1.15.4"
       release: 1.1008100.0
+    - gatewayapi: "v1.1.0"
+      version: "v1.15.6"
+      release: 1.1008110.0
 - project: "contour"
   url: https://projectcontour.io/
   results:
