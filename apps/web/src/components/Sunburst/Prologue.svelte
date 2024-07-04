@@ -100,7 +100,7 @@
     <p> You can click on any section of the sunburst to zoom into that region.
     Click into the center to zoom out one level</p>
 
-    The data used to generate the following sunburst is still to be validated.
+    <b>The data used to generate the following sunburst is still to be validated.</b>
   </SectionHeader>
 {/if}
 
