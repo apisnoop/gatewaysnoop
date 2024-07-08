@@ -12,32 +12,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "post",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "createGatewayNetworkingV1GatewayClass",
-      "conf_tested": true,
-      "description": "create a GatewayClass"
-    },
-    {
-      "kind": "GatewayClass",
-      "path": "/apis/gateway.networking.k8s.io/v1/gatewayclasses",
-      "group": "gateway.networking.k8s.io",
-      "level": "stable",
-      "tests": [
-        "kubectl/v1.30.1 (linux/amd64) kubernetes/6911225"
-      ],
-      "action": "post",
-      "tested": false,
-      "release": "1.1009100.0",
-      "version": "v1",
-      "category": "gatewayNetworking",
-      "endpoint": "createGatewayNetworkingV1GatewayClass",
-      "conf_tested": false,
+      "conf_tested": null,
       "description": "create a GatewayClass"
     },
     {
@@ -46,15 +29,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "post",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "createGatewayNetworkingV1NamespacedGateway",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "create a Gateway"
     },
     {
@@ -63,15 +46,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "post",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "createGatewayNetworkingV1NamespacedHTTPRoute",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "create a HTTPRoute"
     },
     {
@@ -131,15 +114,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "delete",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1GatewayClass",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "delete a GatewayClass"
     },
     {
@@ -148,15 +131,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "delete",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1NamespacedGateway",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "delete a Gateway"
     },
     {
@@ -165,15 +148,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "delete",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1NamespacedHTTPRoute",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "delete a HTTPRoute"
     },
     {
@@ -182,67 +165,16 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/metadata-informers"
+        null
       ],
       "action": "list",
-      "tested": false,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "listGatewayNetworkingV1GatewayClass",
-      "conf_tested": false,
+      "conf_tested": null,
       "description": "list objects of kind GatewayClass"
-    },
-    {
-      "kind": "GatewayClass",
-      "path": "/apis/gateway.networking.k8s.io/v1/gatewayclasses",
-      "group": "gateway.networking.k8s.io",
-      "level": "stable",
-      "tests": [
-        "contour/v0.0.0 (linux/amd64) kubernetes/$Format"
-      ],
-      "action": "list",
-      "tested": false,
-      "release": "1.1009100.0",
-      "version": "v1",
-      "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1GatewayClass",
-      "conf_tested": false,
-      "description": "list objects of kind GatewayClass"
-    },
-    {
-      "kind": "GatewayClass",
-      "path": "/apis/gateway.networking.k8s.io/v1/gatewayclasses",
-      "group": "gateway.networking.k8s.io",
-      "level": "stable",
-      "tests": [
-        "kubectl/v1.30.1 (linux/amd64) kubernetes/6911225"
-      ],
-      "action": "list",
-      "tested": false,
-      "release": "1.1009100.0",
-      "version": "v1",
-      "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1GatewayClass",
-      "conf_tested": false,
-      "description": "list objects of kind GatewayClass"
-    },
-    {
-      "kind": "Gateway",
-      "path": "/apis/gateway.networking.k8s.io/v1/gateways",
-      "group": "gateway.networking.k8s.io",
-      "level": "stable",
-      "tests": [
-        "kubectl/v1.30.1 (linux/amd64) kubernetes/6911225"
-      ],
-      "action": "list",
-      "tested": false,
-      "release": "1.1009100.0",
-      "version": "v1",
-      "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1GatewayForAllNamespaces",
-      "conf_tested": false,
-      "description": "list objects of kind Gateway"
     },
     {
       "kind": "Gateway",
@@ -251,23 +183,6 @@
       "level": "stable",
       "tests": [
         "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/metadata-informers"
-      ],
-      "action": "list",
-      "tested": false,
-      "release": "1.1009100.0",
-      "version": "v1",
-      "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1GatewayForAllNamespaces",
-      "conf_tested": false,
-      "description": "list objects of kind Gateway"
-    },
-    {
-      "kind": "Gateway",
-      "path": "/apis/gateway.networking.k8s.io/v1/gateways",
-      "group": "gateway.networking.k8s.io",
-      "level": "stable",
-      "tests": [
-        "contour/v0.0.0 (linux/amd64) kubernetes/$Format"
       ],
       "action": "list",
       "tested": false,
@@ -285,23 +200,6 @@
       "level": "stable",
       "tests": [
         "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/metadata-informers"
-      ],
-      "action": "list",
-      "tested": false,
-      "release": "1.1009100.0",
-      "version": "v1",
-      "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1HTTPRouteForAllNamespaces",
-      "conf_tested": false,
-      "description": "list objects of kind HTTPRoute"
-    },
-    {
-      "kind": "HTTPRoute",
-      "path": "/apis/gateway.networking.k8s.io/v1/httproutes",
-      "group": "gateway.networking.k8s.io",
-      "level": "stable",
-      "tests": [
-        "contour/v0.0.0 (linux/amd64) kubernetes/$Format"
       ],
       "action": "list",
       "tested": false,
@@ -318,15 +216,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "list",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "listGatewayNetworkingV1NamespacedGateway",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "list objects of kind Gateway"
     },
     {
@@ -352,15 +250,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "patch",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "patchGatewayNetworkingV1GatewayClass",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "partially update the specified GatewayClass"
     },
     {
@@ -386,15 +284,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "patch",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "patchGatewayNetworkingV1NamespacedGateway",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "partially update the specified Gateway"
     },
     {
@@ -420,15 +318,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "patch",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "patchGatewayNetworkingV1NamespacedHTTPRoute",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "partially update the specified HTTPRoute"
     },
     {
@@ -454,32 +352,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "get",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "readGatewayNetworkingV1GatewayClass",
-      "conf_tested": true,
-      "description": "read the specified GatewayClass"
-    },
-    {
-      "kind": "GatewayClass",
-      "path": "/apis/gateway.networking.k8s.io/v1/gatewayclasses/{name}",
-      "group": "gateway.networking.k8s.io",
-      "level": "stable",
-      "tests": [
-        "kubectl/v1.30.1 (linux/amd64) kubernetes/6911225"
-      ],
-      "action": "get",
-      "tested": false,
-      "release": "1.1009100.0",
-      "version": "v1",
-      "category": "gatewayNetworking",
-      "endpoint": "readGatewayNetworkingV1GatewayClass",
-      "conf_tested": false,
+      "conf_tested": null,
       "description": "read the specified GatewayClass"
     },
     {
@@ -505,15 +386,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "get",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "readGatewayNetworkingV1NamespacedGateway",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "read the specified Gateway"
     },
     {
@@ -539,15 +420,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "get",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "readGatewayNetworkingV1NamespacedHTTPRoute",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "read the specified HTTPRoute"
     },
     {
@@ -590,15 +471,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "contour/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "put",
-      "tested": false,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "replaceGatewayNetworkingV1GatewayClassStatus",
-      "conf_tested": false,
+      "conf_tested": null,
       "description": "replace status of the specified GatewayClass"
     },
     {
@@ -624,15 +505,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "contour/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "put",
-      "tested": false,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "replaceGatewayNetworkingV1NamespacedGatewayStatus",
-      "conf_tested": false,
+      "conf_tested": null,
       "description": "replace status of the specified Gateway"
     },
     {
@@ -658,15 +539,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "contour/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "put",
-      "tested": false,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "replaceGatewayNetworkingV1NamespacedHTTPRouteStatus",
-      "conf_tested": false,
+      "conf_tested": null,
       "description": "replace status of the specified HTTPRoute"
     },
     {
@@ -692,15 +573,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "post",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "createGatewayNetworkingV1beta1NamespacedGateway",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "create a Gateway"
     },
     {
@@ -709,15 +590,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "post",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "createGatewayNetworkingV1beta1NamespacedHTTPRoute",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "create a HTTPRoute"
     },
     {
@@ -828,15 +709,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "delete",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1beta1NamespacedGateway",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "delete a Gateway"
     },
     {
@@ -845,15 +726,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "delete",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1beta1NamespacedHTTPRoute",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "delete a HTTPRoute"
     },
     {
@@ -973,23 +854,6 @@
       "category": "gatewayNetworking",
       "endpoint": "listGatewayNetworkingV1beta1NamespacedReferenceGrant",
       "conf_tested": null,
-      "description": "list objects of kind ReferenceGrant"
-    },
-    {
-      "kind": "ReferenceGrant",
-      "path": "/apis/gateway.networking.k8s.io/v1beta1/referencegrants",
-      "group": "gateway.networking.k8s.io",
-      "level": "beta",
-      "tests": [
-        "contour/v0.0.0 (linux/amd64) kubernetes/$Format"
-      ],
-      "action": "list",
-      "tested": false,
-      "release": "1.1009100.0",
-      "version": "v1beta1",
-      "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1beta1ReferenceGrantForAllNamespaces",
-      "conf_tested": false,
       "description": "list objects of kind ReferenceGrant"
     },
     {
@@ -1168,15 +1032,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "get",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "readGatewayNetworkingV1beta1NamespacedGateway",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "read the specified Gateway"
     },
     {
@@ -1202,15 +1066,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "get",
-      "tested": true,
+      "tested": null,
       "release": "1.1009100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "readGatewayNetworkingV1beta1NamespacedHTTPRoute",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "read the specified HTTPRoute"
     },
     {
@@ -1678,23 +1542,6 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        "contour/v0.0.0 (linux/amd64) kubernetes/$Format"
-      ],
-      "action": "list",
-      "tested": false,
-      "release": "1.1009100.0",
-      "version": "v1alpha2",
-      "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1alpha2BackendTLSPolicyForAllNamespaces",
-      "conf_tested": false,
-      "description": "list objects of kind BackendTLSPolicy"
-    },
-    {
-      "kind": "BackendTLSPolicy",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/backendtlspolicies",
-      "group": "gateway.networking.k8s.io",
-      "level": "alpha",
-      "tests": [
         "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/metadata-informers"
       ],
       "action": "list",
@@ -1705,23 +1552,6 @@
       "endpoint": "listGatewayNetworkingV1alpha2BackendTLSPolicyForAllNamespaces",
       "conf_tested": false,
       "description": "list objects of kind BackendTLSPolicy"
-    },
-    {
-      "kind": "GRPCRoute",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/grpcroutes",
-      "group": "gateway.networking.k8s.io",
-      "level": "alpha",
-      "tests": [
-        "contour/v0.0.0 (linux/amd64) kubernetes/$Format"
-      ],
-      "action": "list",
-      "tested": false,
-      "release": "1.1009100.0",
-      "version": "v1alpha2",
-      "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1alpha2GRPCRouteForAllNamespaces",
-      "conf_tested": false,
-      "description": "list objects of kind GRPCRoute"
     },
     {
       "kind": "GRPCRoute",
@@ -1865,23 +1695,6 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        "contour/v0.0.0 (linux/amd64) kubernetes/$Format"
-      ],
-      "action": "list",
-      "tested": false,
-      "release": "1.1009100.0",
-      "version": "v1alpha2",
-      "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1alpha2TCPRouteForAllNamespaces",
-      "conf_tested": false,
-      "description": "list objects of kind TCPRoute"
-    },
-    {
-      "kind": "TCPRoute",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/tcproutes",
-      "group": "gateway.networking.k8s.io",
-      "level": "alpha",
-      "tests": [
         "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/metadata-informers"
       ],
       "action": "list",
@@ -1892,23 +1705,6 @@
       "endpoint": "listGatewayNetworkingV1alpha2TCPRouteForAllNamespaces",
       "conf_tested": false,
       "description": "list objects of kind TCPRoute"
-    },
-    {
-      "kind": "TLSRoute",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/tlsroutes",
-      "group": "gateway.networking.k8s.io",
-      "level": "alpha",
-      "tests": [
-        "contour/v0.0.0 (linux/amd64) kubernetes/$Format"
-      ],
-      "action": "list",
-      "tested": false,
-      "release": "1.1009100.0",
-      "version": "v1alpha2",
-      "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1alpha2TLSRouteForAllNamespaces",
-      "conf_tested": false,
-      "description": "list objects of kind TLSRoute"
     },
     {
       "kind": "TLSRoute",
@@ -2506,7 +2302,7 @@
       "description": "replace status of the specified UDPRoute"
     }
   ],
-  "release_date": "2024-07-07T21:47:29",
+  "release_date": "2024-07-08T03:36:54",
   "total endpoints": 135,
-  "tested endpoints": 19
+  "tested endpoints": 0
 }

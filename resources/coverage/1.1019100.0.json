@@ -12,15 +12,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "post",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "createGatewayNetworkingV1GatewayClass",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "create a GatewayClass"
     },
     {
@@ -29,16 +29,33 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "post",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "createGatewayNetworkingV1NamespacedGateway",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "create a Gateway"
+    },
+    {
+      "kind": "GRPCRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/grpcroutes",
+      "group": "gateway.networking.k8s.io",
+      "level": "stable",
+      "tests": [
+        "pilot.test/unknown"
+      ],
+      "action": "post",
+      "tested": true,
+      "release": "1.1019100.0",
+      "version": "v1",
+      "category": "gatewayNetworking",
+      "endpoint": "createGatewayNetworkingV1NamespacedGRPCRoute",
+      "conf_tested": true,
+      "description": "create a GRPCRoute"
     },
     {
       "kind": "HTTPRoute",
@@ -46,15 +63,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "post",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "createGatewayNetworkingV1NamespacedHTTPRoute",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "create a HTTPRoute"
     },
     {
@@ -92,6 +109,23 @@
       "description": "delete collection of Gateway"
     },
     {
+      "kind": "GRPCRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/grpcroutes",
+      "group": "gateway.networking.k8s.io",
+      "level": "stable",
+      "tests": [
+        null
+      ],
+      "action": "deletecollection",
+      "tested": null,
+      "release": "1.1019100.0",
+      "version": "v1",
+      "category": "gatewayNetworking",
+      "endpoint": "deleteGatewayNetworkingV1CollectionNamespacedGRPCRoute",
+      "conf_tested": null,
+      "description": "delete collection of GRPCRoute"
+    },
+    {
       "kind": "HTTPRoute",
       "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/httproutes",
       "group": "gateway.networking.k8s.io",
@@ -114,15 +148,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "delete",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1GatewayClass",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "delete a GatewayClass"
     },
     {
@@ -131,16 +165,33 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "delete",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1NamespacedGateway",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "delete a Gateway"
+    },
+    {
+      "kind": "GRPCRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/grpcroutes/{name}",
+      "group": "gateway.networking.k8s.io",
+      "level": "stable",
+      "tests": [
+        "pilot.test/unknown"
+      ],
+      "action": "delete",
+      "tested": true,
+      "release": "1.1019100.0",
+      "version": "v1",
+      "category": "gatewayNetworking",
+      "endpoint": "deleteGatewayNetworkingV1NamespacedGRPCRoute",
+      "conf_tested": true,
+      "description": "delete a GRPCRoute"
     },
     {
       "kind": "HTTPRoute",
@@ -148,15 +199,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "delete",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1NamespacedHTTPRoute",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "delete a HTTPRoute"
     },
     {
@@ -165,7 +216,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "kubectl/v1.30.1 (linux/amd64) kubernetes/6911225"
+        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/metadata-informers"
       ],
       "action": "list",
       "tested": false,
@@ -182,7 +233,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/metadata-informers"
+        "kubectl/v1.30.2 (linux/amd64) kubernetes/3968350"
       ],
       "action": "list",
       "tested": false,
@@ -199,7 +250,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "kubectl/v1.30.1 (linux/amd64) kubernetes/6911225"
+        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/metadata-informers"
       ],
       "action": "list",
       "tested": false,
@@ -211,8 +262,25 @@
       "description": "list objects of kind Gateway"
     },
     {
-      "kind": "Gateway",
-      "path": "/apis/gateway.networking.k8s.io/v1/gateways",
+      "kind": "GRPCRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1/grpcroutes",
+      "group": "gateway.networking.k8s.io",
+      "level": "stable",
+      "tests": [
+        "pilot-discovery/1.22.1"
+      ],
+      "action": "list",
+      "tested": false,
+      "release": "1.1019100.0",
+      "version": "v1",
+      "category": "gatewayNetworking",
+      "endpoint": "listGatewayNetworkingV1GRPCRouteForAllNamespaces",
+      "conf_tested": false,
+      "description": "list objects of kind GRPCRoute"
+    },
+    {
+      "kind": "GRPCRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1/grpcroutes",
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
@@ -223,9 +291,26 @@
       "release": "1.1019100.0",
       "version": "v1",
       "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1GatewayForAllNamespaces",
+      "endpoint": "listGatewayNetworkingV1GRPCRouteForAllNamespaces",
       "conf_tested": false,
-      "description": "list objects of kind Gateway"
+      "description": "list objects of kind GRPCRoute"
+    },
+    {
+      "kind": "GRPCRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1/grpcroutes",
+      "group": "gateway.networking.k8s.io",
+      "level": "stable",
+      "tests": [
+        "pilot-discovery/1.23-alpha.ee63c065291a373ea83396b0c60f031da9deb2c9"
+      ],
+      "action": "list",
+      "tested": false,
+      "release": "1.1019100.0",
+      "version": "v1",
+      "category": "gatewayNetworking",
+      "endpoint": "listGatewayNetworkingV1GRPCRouteForAllNamespaces",
+      "conf_tested": false,
+      "description": "list objects of kind GRPCRoute"
     },
     {
       "kind": "HTTPRoute",
@@ -250,6 +335,23 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
+        "pilot.test/unknown"
+      ],
+      "action": "list",
+      "tested": true,
+      "release": "1.1019100.0",
+      "version": "v1",
+      "category": "gatewayNetworking",
+      "endpoint": "listGatewayNetworkingV1NamespacedGateway",
+      "conf_tested": true,
+      "description": "list objects of kind Gateway"
+    },
+    {
+      "kind": "GRPCRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/grpcroutes",
+      "group": "gateway.networking.k8s.io",
+      "level": "stable",
+      "tests": [
         null
       ],
       "action": "list",
@@ -257,9 +359,9 @@
       "release": "1.1019100.0",
       "version": "v1",
       "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1NamespacedGateway",
+      "endpoint": "listGatewayNetworkingV1NamespacedGRPCRoute",
       "conf_tested": null,
-      "description": "list objects of kind Gateway"
+      "description": "list objects of kind GRPCRoute"
     },
     {
       "kind": "HTTPRoute",
@@ -284,15 +386,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "patch",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "patchGatewayNetworkingV1GatewayClass",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "partially update the specified GatewayClass"
     },
     {
@@ -318,15 +420,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "patch",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "patchGatewayNetworkingV1NamespacedGateway",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "partially update the specified Gateway"
     },
     {
@@ -347,8 +449,8 @@
       "description": "partially update status of the specified Gateway"
     },
     {
-      "kind": "HTTPRoute",
-      "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/httproutes/{name}",
+      "kind": "GRPCRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/grpcroutes/{name}",
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
@@ -359,8 +461,42 @@
       "release": "1.1019100.0",
       "version": "v1",
       "category": "gatewayNetworking",
-      "endpoint": "patchGatewayNetworkingV1NamespacedHTTPRoute",
+      "endpoint": "patchGatewayNetworkingV1NamespacedGRPCRoute",
       "conf_tested": null,
+      "description": "partially update the specified GRPCRoute"
+    },
+    {
+      "kind": "GRPCRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/grpcroutes/{name}/status",
+      "group": "gateway.networking.k8s.io",
+      "level": "stable",
+      "tests": [
+        null
+      ],
+      "action": "patch",
+      "tested": null,
+      "release": "1.1019100.0",
+      "version": "v1",
+      "category": "gatewayNetworking",
+      "endpoint": "patchGatewayNetworkingV1NamespacedGRPCRouteStatus",
+      "conf_tested": null,
+      "description": "partially update status of the specified GRPCRoute"
+    },
+    {
+      "kind": "HTTPRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/httproutes/{name}",
+      "group": "gateway.networking.k8s.io",
+      "level": "stable",
+      "tests": [
+        "pilot.test/unknown"
+      ],
+      "action": "patch",
+      "tested": true,
+      "release": "1.1019100.0",
+      "version": "v1",
+      "category": "gatewayNetworking",
+      "endpoint": "patchGatewayNetworkingV1NamespacedHTTPRoute",
+      "conf_tested": true,
       "description": "partially update the specified HTTPRoute"
     },
     {
@@ -386,7 +522,24 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "kubectl/v1.30.1 (linux/amd64) kubernetes/6911225"
+        "pilot.test/unknown"
+      ],
+      "action": "get",
+      "tested": true,
+      "release": "1.1019100.0",
+      "version": "v1",
+      "category": "gatewayNetworking",
+      "endpoint": "readGatewayNetworkingV1GatewayClass",
+      "conf_tested": true,
+      "description": "read the specified GatewayClass"
+    },
+    {
+      "kind": "GatewayClass",
+      "path": "/apis/gateway.networking.k8s.io/v1/gatewayclasses/{name}",
+      "group": "gateway.networking.k8s.io",
+      "level": "stable",
+      "tests": [
+        "kubectl/v1.30.2 (linux/amd64) kubernetes/3968350"
       ],
       "action": "get",
       "tested": false,
@@ -420,15 +573,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "get",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "readGatewayNetworkingV1NamespacedGateway",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "read the specified Gateway"
     },
     {
@@ -449,8 +602,25 @@
       "description": "read status of the specified Gateway"
     },
     {
-      "kind": "HTTPRoute",
-      "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/httproutes/{name}",
+      "kind": "GRPCRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/grpcroutes/{name}",
+      "group": "gateway.networking.k8s.io",
+      "level": "stable",
+      "tests": [
+        "pilot.test/unknown"
+      ],
+      "action": "get",
+      "tested": true,
+      "release": "1.1019100.0",
+      "version": "v1",
+      "category": "gatewayNetworking",
+      "endpoint": "readGatewayNetworkingV1NamespacedGRPCRoute",
+      "conf_tested": true,
+      "description": "read the specified GRPCRoute"
+    },
+    {
+      "kind": "GRPCRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/grpcroutes/{name}/status",
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
@@ -461,8 +631,25 @@
       "release": "1.1019100.0",
       "version": "v1",
       "category": "gatewayNetworking",
-      "endpoint": "readGatewayNetworkingV1NamespacedHTTPRoute",
+      "endpoint": "readGatewayNetworkingV1NamespacedGRPCRouteStatus",
       "conf_tested": null,
+      "description": "read status of the specified GRPCRoute"
+    },
+    {
+      "kind": "HTTPRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/httproutes/{name}",
+      "group": "gateway.networking.k8s.io",
+      "level": "stable",
+      "tests": [
+        "pilot.test/unknown"
+      ],
+      "action": "get",
+      "tested": true,
+      "release": "1.1019100.0",
+      "version": "v1",
+      "category": "gatewayNetworking",
+      "endpoint": "readGatewayNetworkingV1NamespacedHTTPRoute",
+      "conf_tested": true,
       "description": "read the specified HTTPRoute"
     },
     {
@@ -551,6 +738,40 @@
       "description": "replace status of the specified Gateway"
     },
     {
+      "kind": "GRPCRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/grpcroutes/{name}",
+      "group": "gateway.networking.k8s.io",
+      "level": "stable",
+      "tests": [
+        null
+      ],
+      "action": "put",
+      "tested": null,
+      "release": "1.1019100.0",
+      "version": "v1",
+      "category": "gatewayNetworking",
+      "endpoint": "replaceGatewayNetworkingV1NamespacedGRPCRoute",
+      "conf_tested": null,
+      "description": "replace the specified GRPCRoute"
+    },
+    {
+      "kind": "GRPCRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/grpcroutes/{name}/status",
+      "group": "gateway.networking.k8s.io",
+      "level": "stable",
+      "tests": [
+        "pilot-discovery/1.23-alpha.ee63c065291a373ea83396b0c60f031da9deb2c9"
+      ],
+      "action": "put",
+      "tested": false,
+      "release": "1.1019100.0",
+      "version": "v1",
+      "category": "gatewayNetworking",
+      "endpoint": "replaceGatewayNetworkingV1NamespacedGRPCRouteStatus",
+      "conf_tested": false,
+      "description": "replace status of the specified GRPCRoute"
+    },
+    {
       "kind": "HTTPRoute",
       "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/httproutes/{name}",
       "group": "gateway.networking.k8s.io",
@@ -590,7 +811,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.23-alpha.e5e0f45bd13f9df46fdea8a19adffb6532a04a0f"
+        "pilot-discovery/1.23-alpha.ee63c065291a373ea83396b0c60f031da9deb2c9"
       ],
       "action": "post",
       "tested": false,
@@ -624,15 +845,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "post",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "createGatewayNetworkingV1beta1NamespacedGateway",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "create a Gateway"
     },
     {
@@ -641,15 +862,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "post",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "createGatewayNetworkingV1beta1NamespacedHTTPRoute",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "create a HTTPRoute"
     },
     {
@@ -658,15 +879,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "post",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "createGatewayNetworkingV1beta1NamespacedReferenceGrant",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "create a ReferenceGrant"
     },
     {
@@ -760,15 +981,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "delete",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1beta1NamespacedGateway",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "delete a Gateway"
     },
     {
@@ -777,15 +998,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "delete",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1beta1NamespacedHTTPRoute",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "delete a HTTPRoute"
     },
     {
@@ -794,15 +1015,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "delete",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1beta1NamespacedReferenceGrant",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "delete a ReferenceGrant"
     },
     {
@@ -811,7 +1032,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.22.1"
+        "pilot-discovery/1.23-alpha.ee63c065291a373ea83396b0c60f031da9deb2c9"
       ],
       "action": "list",
       "tested": false,
@@ -828,7 +1049,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.23-alpha.e5e0f45bd13f9df46fdea8a19adffb6532a04a0f"
+        "pilot-discovery/1.22.1"
       ],
       "action": "list",
       "tested": false,
@@ -845,7 +1066,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.22.1"
+        "pilot-discovery/1.23-alpha.ee63c065291a373ea83396b0c60f031da9deb2c9"
       ],
       "action": "list",
       "tested": false,
@@ -862,7 +1083,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.23-alpha.e5e0f45bd13f9df46fdea8a19adffb6532a04a0f"
+        "pilot-discovery/1.22.1"
       ],
       "action": "list",
       "tested": false,
@@ -879,7 +1100,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.22.1"
+        "pilot-discovery/1.23-alpha.ee63c065291a373ea83396b0c60f031da9deb2c9"
       ],
       "action": "list",
       "tested": false,
@@ -896,7 +1117,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.23-alpha.e5e0f45bd13f9df46fdea8a19adffb6532a04a0f"
+        "pilot-discovery/1.22.1"
       ],
       "action": "list",
       "tested": false,
@@ -964,7 +1185,24 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.23-alpha.e5e0f45bd13f9df46fdea8a19adffb6532a04a0f"
+        "pilot-discovery/1.22.1"
+      ],
+      "action": "list",
+      "tested": false,
+      "release": "1.1019100.0",
+      "version": "v1beta1",
+      "category": "gatewayNetworking",
+      "endpoint": "listGatewayNetworkingV1beta1ReferenceGrantForAllNamespaces",
+      "conf_tested": false,
+      "description": "list objects of kind ReferenceGrant"
+    },
+    {
+      "kind": "ReferenceGrant",
+      "path": "/apis/gateway.networking.k8s.io/v1beta1/referencegrants",
+      "group": "gateway.networking.k8s.io",
+      "level": "beta",
+      "tests": [
+        "pilot-discovery/1.23-alpha.ee63c065291a373ea83396b0c60f031da9deb2c9"
       ],
       "action": "list",
       "tested": false,
@@ -993,29 +1231,12 @@
       "description": "list objects of kind ReferenceGrant"
     },
     {
-      "kind": "ReferenceGrant",
-      "path": "/apis/gateway.networking.k8s.io/v1beta1/referencegrants",
-      "group": "gateway.networking.k8s.io",
-      "level": "beta",
-      "tests": [
-        "pilot-discovery/1.22.1"
-      ],
-      "action": "list",
-      "tested": false,
-      "release": "1.1019100.0",
-      "version": "v1beta1",
-      "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1beta1ReferenceGrantForAllNamespaces",
-      "conf_tested": false,
-      "description": "list objects of kind ReferenceGrant"
-    },
-    {
       "kind": "GatewayClass",
       "path": "/apis/gateway.networking.k8s.io/v1beta1/gatewayclasses/{name}",
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "kubectl/v1.30.1 (linux/amd64) kubernetes/6911225"
+        "kubectl/v1.30.2 (linux/amd64) kubernetes/3968350"
       ],
       "action": "patch",
       "tested": false,
@@ -1049,15 +1270,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        null
+        "pilot-discovery/1.23-alpha.ee63c065291a373ea83396b0c60f031da9deb2c9"
       ],
       "action": "patch",
-      "tested": null,
+      "tested": false,
       "release": "1.1019100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "patchGatewayNetworkingV1beta1NamespacedGateway",
-      "conf_tested": null,
+      "conf_tested": false,
       "description": "partially update the specified Gateway"
     },
     {
@@ -1134,7 +1355,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "kubectl/v1.30.1 (linux/amd64) kubernetes/6911225"
+        "kubectl/v1.30.2 (linux/amd64) kubernetes/3968350"
       ],
       "action": "get",
       "tested": false,
@@ -1143,6 +1364,23 @@
       "category": "gatewayNetworking",
       "endpoint": "readGatewayNetworkingV1beta1GatewayClass",
       "conf_tested": false,
+      "description": "read the specified GatewayClass"
+    },
+    {
+      "kind": "GatewayClass",
+      "path": "/apis/gateway.networking.k8s.io/v1beta1/gatewayclasses/{name}",
+      "group": "gateway.networking.k8s.io",
+      "level": "beta",
+      "tests": [
+        "pilot.test/unknown"
+      ],
+      "action": "get",
+      "tested": true,
+      "release": "1.1019100.0",
+      "version": "v1beta1",
+      "category": "gatewayNetworking",
+      "endpoint": "readGatewayNetworkingV1beta1GatewayClass",
+      "conf_tested": true,
       "description": "read the specified GatewayClass"
     },
     {
@@ -1168,15 +1406,32 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        null
+        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:generic-garbage-collector"
       ],
       "action": "get",
-      "tested": null,
+      "tested": false,
       "release": "1.1019100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "readGatewayNetworkingV1beta1NamespacedGateway",
-      "conf_tested": null,
+      "conf_tested": false,
+      "description": "read the specified Gateway"
+    },
+    {
+      "kind": "Gateway",
+      "path": "/apis/gateway.networking.k8s.io/v1beta1/namespaces/{namespace}/gateways/{name}",
+      "group": "gateway.networking.k8s.io",
+      "level": "beta",
+      "tests": [
+        "pilot.test/unknown"
+      ],
+      "action": "get",
+      "tested": true,
+      "release": "1.1019100.0",
+      "version": "v1beta1",
+      "category": "gatewayNetworking",
+      "endpoint": "readGatewayNetworkingV1beta1NamespacedGateway",
+      "conf_tested": true,
       "description": "read the specified Gateway"
     },
     {
@@ -1202,15 +1457,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "get",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "readGatewayNetworkingV1beta1NamespacedHTTPRoute",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "read the specified HTTPRoute"
     },
     {
@@ -1236,15 +1491,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "get",
-      "tested": null,
+      "tested": true,
       "release": "1.1019100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "readGatewayNetworkingV1beta1NamespacedReferenceGrant",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "read the specified ReferenceGrant"
     },
     {
@@ -1270,7 +1525,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.23-alpha.e5e0f45bd13f9df46fdea8a19adffb6532a04a0f"
+        "pilot-discovery/1.23-alpha.ee63c065291a373ea83396b0c60f031da9deb2c9"
       ],
       "action": "put",
       "tested": false,
@@ -1321,15 +1576,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        null
+        "pilot-discovery/1.23-alpha.ee63c065291a373ea83396b0c60f031da9deb2c9"
       ],
       "action": "put",
-      "tested": null,
+      "tested": false,
       "release": "1.1019100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "replaceGatewayNetworkingV1beta1NamespacedGatewayStatus",
-      "conf_tested": null,
+      "conf_tested": false,
       "description": "replace status of the specified Gateway"
     },
     {
@@ -1355,15 +1610,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        null
+        "pilot-discovery/1.23-alpha.ee63c065291a373ea83396b0c60f031da9deb2c9"
       ],
       "action": "put",
-      "tested": null,
+      "tested": false,
       "release": "1.1019100.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "replaceGatewayNetworkingV1beta1NamespacedHTTPRouteStatus",
-      "conf_tested": null,
+      "conf_tested": false,
       "description": "replace status of the specified HTTPRoute"
     },
     {
@@ -1384,8 +1639,8 @@
       "description": "replace the specified ReferenceGrant"
     },
     {
-      "kind": "BackendTLSPolicy",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendtlspolicies",
+      "kind": "BackendLBPolicy",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendlbpolicies",
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
@@ -1396,9 +1651,9 @@
       "release": "1.1019100.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
-      "endpoint": "createGatewayNetworkingV1alpha2NamespacedBackendTLSPolicy",
+      "endpoint": "createGatewayNetworkingV1alpha2NamespacedBackendLBPolicy",
       "conf_tested": null,
-      "description": "create a BackendTLSPolicy"
+      "description": "create a BackendLBPolicy"
     },
     {
       "kind": "GRPCRoute",
@@ -1487,7 +1742,24 @@
     },
     {
       "kind": "BackendTLSPolicy",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendtlspolicies",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha3/namespaces/{namespace}/backendtlspolicies",
+      "group": "gateway.networking.k8s.io",
+      "level": "alpha",
+      "tests": [
+        null
+      ],
+      "action": "post",
+      "tested": null,
+      "release": "1.1019100.0",
+      "version": "v1alpha3",
+      "category": "gatewayNetworking",
+      "endpoint": "createGatewayNetworkingV1alpha3NamespacedBackendTLSPolicy",
+      "conf_tested": null,
+      "description": "create a BackendTLSPolicy"
+    },
+    {
+      "kind": "BackendLBPolicy",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendlbpolicies",
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
@@ -1498,9 +1770,9 @@
       "release": "1.1019100.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
-      "endpoint": "deleteGatewayNetworkingV1alpha2CollectionNamespacedBackendTLSPolicy",
+      "endpoint": "deleteGatewayNetworkingV1alpha2CollectionNamespacedBackendLBPolicy",
       "conf_tested": null,
-      "description": "delete collection of BackendTLSPolicy"
+      "description": "delete collection of BackendLBPolicy"
     },
     {
       "kind": "GRPCRoute",
@@ -1588,8 +1860,8 @@
       "description": "delete collection of UDPRoute"
     },
     {
-      "kind": "BackendTLSPolicy",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendtlspolicies/{name}",
+      "kind": "BackendLBPolicy",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendlbpolicies/{name}",
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
@@ -1600,9 +1872,9 @@
       "release": "1.1019100.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
-      "endpoint": "deleteGatewayNetworkingV1alpha2NamespacedBackendTLSPolicy",
+      "endpoint": "deleteGatewayNetworkingV1alpha2NamespacedBackendLBPolicy",
       "conf_tested": null,
-      "description": "delete a BackendTLSPolicy"
+      "description": "delete a BackendLBPolicy"
     },
     {
       "kind": "GRPCRoute",
@@ -1691,7 +1963,41 @@
     },
     {
       "kind": "BackendTLSPolicy",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/backendtlspolicies",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha3/namespaces/{namespace}/backendtlspolicies",
+      "group": "gateway.networking.k8s.io",
+      "level": "alpha",
+      "tests": [
+        null
+      ],
+      "action": "deletecollection",
+      "tested": null,
+      "release": "1.1019100.0",
+      "version": "v1alpha3",
+      "category": "gatewayNetworking",
+      "endpoint": "deleteGatewayNetworkingV1alpha3CollectionNamespacedBackendTLSPolicy",
+      "conf_tested": null,
+      "description": "delete collection of BackendTLSPolicy"
+    },
+    {
+      "kind": "BackendTLSPolicy",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha3/namespaces/{namespace}/backendtlspolicies/{name}",
+      "group": "gateway.networking.k8s.io",
+      "level": "alpha",
+      "tests": [
+        null
+      ],
+      "action": "delete",
+      "tested": null,
+      "release": "1.1019100.0",
+      "version": "v1alpha3",
+      "category": "gatewayNetworking",
+      "endpoint": "deleteGatewayNetworkingV1alpha3NamespacedBackendTLSPolicy",
+      "conf_tested": null,
+      "description": "delete a BackendTLSPolicy"
+    },
+    {
+      "kind": "BackendLBPolicy",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha2/backendlbpolicies",
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
@@ -1702,30 +2008,13 @@
       "release": "1.1019100.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1alpha2BackendTLSPolicyForAllNamespaces",
+      "endpoint": "listGatewayNetworkingV1alpha2BackendLBPolicyForAllNamespaces",
       "conf_tested": false,
-      "description": "list objects of kind BackendTLSPolicy"
+      "description": "list objects of kind BackendLBPolicy"
     },
     {
       "kind": "GRPCRoute",
       "path": "/apis/gateway.networking.k8s.io/v1alpha2/grpcroutes",
-      "group": "gateway.networking.k8s.io",
-      "level": "alpha",
-      "tests": [
-        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/metadata-informers"
-      ],
-      "action": "list",
-      "tested": false,
-      "release": "1.1019100.0",
-      "version": "v1alpha2",
-      "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1alpha2GRPCRouteForAllNamespaces",
-      "conf_tested": false,
-      "description": "list objects of kind GRPCRoute"
-    },
-    {
-      "kind": "BackendTLSPolicy",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendtlspolicies",
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
@@ -1736,9 +2025,26 @@
       "release": "1.1019100.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1alpha2NamespacedBackendTLSPolicy",
+      "endpoint": "listGatewayNetworkingV1alpha2GRPCRouteForAllNamespaces",
       "conf_tested": null,
-      "description": "list objects of kind BackendTLSPolicy"
+      "description": "list objects of kind GRPCRoute"
+    },
+    {
+      "kind": "BackendLBPolicy",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendlbpolicies",
+      "group": "gateway.networking.k8s.io",
+      "level": "alpha",
+      "tests": [
+        null
+      ],
+      "action": "list",
+      "tested": null,
+      "release": "1.1019100.0",
+      "version": "v1alpha2",
+      "category": "gatewayNetworking",
+      "endpoint": "listGatewayNetworkingV1alpha2NamespacedBackendLBPolicy",
+      "conf_tested": null,
+      "description": "list objects of kind BackendLBPolicy"
     },
     {
       "kind": "GRPCRoute",
@@ -1865,7 +2171,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        "pilot-discovery/1.23-alpha.e5e0f45bd13f9df46fdea8a19adffb6532a04a0f"
+        "pilot-discovery/1.23-alpha.ee63c065291a373ea83396b0c60f031da9deb2c9"
       ],
       "action": "list",
       "tested": false,
@@ -1899,7 +2205,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        "pilot-discovery/1.23-alpha.e5e0f45bd13f9df46fdea8a19adffb6532a04a0f"
+        "pilot-discovery/1.23-alpha.ee63c065291a373ea83396b0c60f031da9deb2c9"
       ],
       "action": "list",
       "tested": false,
@@ -1909,23 +2215,6 @@
       "endpoint": "listGatewayNetworkingV1alpha2TLSRouteForAllNamespaces",
       "conf_tested": false,
       "description": "list objects of kind TLSRoute"
-    },
-    {
-      "kind": "UDPRoute",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/udproutes",
-      "group": "gateway.networking.k8s.io",
-      "level": "alpha",
-      "tests": [
-        "pilot-discovery/1.23-alpha.e5e0f45bd13f9df46fdea8a19adffb6532a04a0f"
-      ],
-      "action": "list",
-      "tested": false,
-      "release": "1.1019100.0",
-      "version": "v1alpha2",
-      "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1alpha2UDPRouteForAllNamespaces",
-      "conf_tested": false,
-      "description": "list objects of kind UDPRoute"
     },
     {
       "kind": "UDPRoute",
@@ -1945,25 +2234,59 @@
       "description": "list objects of kind UDPRoute"
     },
     {
-      "kind": "BackendTLSPolicy",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendtlspolicies/{name}",
+      "kind": "UDPRoute",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha2/udproutes",
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        null
+        "pilot-discovery/1.23-alpha.ee63c065291a373ea83396b0c60f031da9deb2c9"
       ],
-      "action": "patch",
-      "tested": null,
+      "action": "list",
+      "tested": false,
       "release": "1.1019100.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
-      "endpoint": "patchGatewayNetworkingV1alpha2NamespacedBackendTLSPolicy",
-      "conf_tested": null,
-      "description": "partially update the specified BackendTLSPolicy"
+      "endpoint": "listGatewayNetworkingV1alpha2UDPRouteForAllNamespaces",
+      "conf_tested": false,
+      "description": "list objects of kind UDPRoute"
     },
     {
       "kind": "BackendTLSPolicy",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendtlspolicies/{name}/status",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha3/backendtlspolicies",
+      "group": "gateway.networking.k8s.io",
+      "level": "alpha",
+      "tests": [
+        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/metadata-informers"
+      ],
+      "action": "list",
+      "tested": false,
+      "release": "1.1019100.0",
+      "version": "v1alpha3",
+      "category": "gatewayNetworking",
+      "endpoint": "listGatewayNetworkingV1alpha3BackendTLSPolicyForAllNamespaces",
+      "conf_tested": false,
+      "description": "list objects of kind BackendTLSPolicy"
+    },
+    {
+      "kind": "BackendTLSPolicy",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha3/namespaces/{namespace}/backendtlspolicies",
+      "group": "gateway.networking.k8s.io",
+      "level": "alpha",
+      "tests": [
+        null
+      ],
+      "action": "list",
+      "tested": null,
+      "release": "1.1019100.0",
+      "version": "v1alpha3",
+      "category": "gatewayNetworking",
+      "endpoint": "listGatewayNetworkingV1alpha3NamespacedBackendTLSPolicy",
+      "conf_tested": null,
+      "description": "list objects of kind BackendTLSPolicy"
+    },
+    {
+      "kind": "BackendLBPolicy",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendlbpolicies/{name}",
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
@@ -1974,9 +2297,26 @@
       "release": "1.1019100.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
-      "endpoint": "patchGatewayNetworkingV1alpha2NamespacedBackendTLSPolicyStatus",
+      "endpoint": "patchGatewayNetworkingV1alpha2NamespacedBackendLBPolicy",
       "conf_tested": null,
-      "description": "partially update status of the specified BackendTLSPolicy"
+      "description": "partially update the specified BackendLBPolicy"
+    },
+    {
+      "kind": "BackendLBPolicy",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendlbpolicies/{name}/status",
+      "group": "gateway.networking.k8s.io",
+      "level": "alpha",
+      "tests": [
+        null
+      ],
+      "action": "patch",
+      "tested": null,
+      "release": "1.1019100.0",
+      "version": "v1alpha2",
+      "category": "gatewayNetworking",
+      "endpoint": "patchGatewayNetworkingV1alpha2NamespacedBackendLBPolicyStatus",
+      "conf_tested": null,
+      "description": "partially update status of the specified BackendLBPolicy"
     },
     {
       "kind": "GRPCRoute",
@@ -1994,23 +2334,6 @@
       "endpoint": "patchGatewayNetworkingV1alpha2NamespacedGRPCRoute",
       "conf_tested": null,
       "description": "partially update the specified GRPCRoute"
-    },
-    {
-      "kind": "GRPCRoute",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/grpcroutes/{name}/status",
-      "group": "gateway.networking.k8s.io",
-      "level": "alpha",
-      "tests": [
-        null
-      ],
-      "action": "patch",
-      "tested": null,
-      "release": "1.1019100.0",
-      "version": "v1alpha2",
-      "category": "gatewayNetworking",
-      "endpoint": "patchGatewayNetworkingV1alpha2NamespacedGRPCRouteStatus",
-      "conf_tested": null,
-      "description": "partially update status of the specified GRPCRoute"
     },
     {
       "kind": "ReferenceGrant",
@@ -2133,24 +2456,41 @@
     },
     {
       "kind": "BackendTLSPolicy",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendtlspolicies/{name}",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha3/namespaces/{namespace}/backendtlspolicies/{name}",
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
         null
       ],
-      "action": "get",
+      "action": "patch",
       "tested": null,
       "release": "1.1019100.0",
-      "version": "v1alpha2",
+      "version": "v1alpha3",
       "category": "gatewayNetworking",
-      "endpoint": "readGatewayNetworkingV1alpha2NamespacedBackendTLSPolicy",
+      "endpoint": "patchGatewayNetworkingV1alpha3NamespacedBackendTLSPolicy",
       "conf_tested": null,
-      "description": "read the specified BackendTLSPolicy"
+      "description": "partially update the specified BackendTLSPolicy"
     },
     {
       "kind": "BackendTLSPolicy",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendtlspolicies/{name}/status",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha3/namespaces/{namespace}/backendtlspolicies/{name}/status",
+      "group": "gateway.networking.k8s.io",
+      "level": "alpha",
+      "tests": [
+        null
+      ],
+      "action": "patch",
+      "tested": null,
+      "release": "1.1019100.0",
+      "version": "v1alpha3",
+      "category": "gatewayNetworking",
+      "endpoint": "patchGatewayNetworkingV1alpha3NamespacedBackendTLSPolicyStatus",
+      "conf_tested": null,
+      "description": "partially update status of the specified BackendTLSPolicy"
+    },
+    {
+      "kind": "BackendLBPolicy",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendlbpolicies/{name}",
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
@@ -2161,9 +2501,26 @@
       "release": "1.1019100.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
-      "endpoint": "readGatewayNetworkingV1alpha2NamespacedBackendTLSPolicyStatus",
+      "endpoint": "readGatewayNetworkingV1alpha2NamespacedBackendLBPolicy",
       "conf_tested": null,
-      "description": "read status of the specified BackendTLSPolicy"
+      "description": "read the specified BackendLBPolicy"
+    },
+    {
+      "kind": "BackendLBPolicy",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendlbpolicies/{name}/status",
+      "group": "gateway.networking.k8s.io",
+      "level": "alpha",
+      "tests": [
+        null
+      ],
+      "action": "get",
+      "tested": null,
+      "release": "1.1019100.0",
+      "version": "v1alpha2",
+      "category": "gatewayNetworking",
+      "endpoint": "readGatewayNetworkingV1alpha2NamespacedBackendLBPolicyStatus",
+      "conf_tested": null,
+      "description": "read status of the specified BackendLBPolicy"
     },
     {
       "kind": "GRPCRoute",
@@ -2181,23 +2538,6 @@
       "endpoint": "readGatewayNetworkingV1alpha2NamespacedGRPCRoute",
       "conf_tested": null,
       "description": "read the specified GRPCRoute"
-    },
-    {
-      "kind": "GRPCRoute",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/grpcroutes/{name}/status",
-      "group": "gateway.networking.k8s.io",
-      "level": "alpha",
-      "tests": [
-        null
-      ],
-      "action": "get",
-      "tested": null,
-      "release": "1.1019100.0",
-      "version": "v1alpha2",
-      "category": "gatewayNetworking",
-      "endpoint": "readGatewayNetworkingV1alpha2NamespacedGRPCRouteStatus",
-      "conf_tested": null,
-      "description": "read status of the specified GRPCRoute"
     },
     {
       "kind": "ReferenceGrant",
@@ -2320,24 +2660,41 @@
     },
     {
       "kind": "BackendTLSPolicy",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendtlspolicies/{name}",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha3/namespaces/{namespace}/backendtlspolicies/{name}",
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
         null
       ],
-      "action": "put",
+      "action": "get",
       "tested": null,
       "release": "1.1019100.0",
-      "version": "v1alpha2",
+      "version": "v1alpha3",
       "category": "gatewayNetworking",
-      "endpoint": "replaceGatewayNetworkingV1alpha2NamespacedBackendTLSPolicy",
+      "endpoint": "readGatewayNetworkingV1alpha3NamespacedBackendTLSPolicy",
       "conf_tested": null,
-      "description": "replace the specified BackendTLSPolicy"
+      "description": "read the specified BackendTLSPolicy"
     },
     {
       "kind": "BackendTLSPolicy",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendtlspolicies/{name}/status",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha3/namespaces/{namespace}/backendtlspolicies/{name}/status",
+      "group": "gateway.networking.k8s.io",
+      "level": "alpha",
+      "tests": [
+        null
+      ],
+      "action": "get",
+      "tested": null,
+      "release": "1.1019100.0",
+      "version": "v1alpha3",
+      "category": "gatewayNetworking",
+      "endpoint": "readGatewayNetworkingV1alpha3NamespacedBackendTLSPolicyStatus",
+      "conf_tested": null,
+      "description": "read status of the specified BackendTLSPolicy"
+    },
+    {
+      "kind": "BackendLBPolicy",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendlbpolicies/{name}",
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
@@ -2348,9 +2705,26 @@
       "release": "1.1019100.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
-      "endpoint": "replaceGatewayNetworkingV1alpha2NamespacedBackendTLSPolicyStatus",
+      "endpoint": "replaceGatewayNetworkingV1alpha2NamespacedBackendLBPolicy",
       "conf_tested": null,
-      "description": "replace status of the specified BackendTLSPolicy"
+      "description": "replace the specified BackendLBPolicy"
+    },
+    {
+      "kind": "BackendLBPolicy",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/backendlbpolicies/{name}/status",
+      "group": "gateway.networking.k8s.io",
+      "level": "alpha",
+      "tests": [
+        null
+      ],
+      "action": "put",
+      "tested": null,
+      "release": "1.1019100.0",
+      "version": "v1alpha2",
+      "category": "gatewayNetworking",
+      "endpoint": "replaceGatewayNetworkingV1alpha2NamespacedBackendLBPolicyStatus",
+      "conf_tested": null,
+      "description": "replace status of the specified BackendLBPolicy"
     },
     {
       "kind": "GRPCRoute",
@@ -2368,23 +2742,6 @@
       "endpoint": "replaceGatewayNetworkingV1alpha2NamespacedGRPCRoute",
       "conf_tested": null,
       "description": "replace the specified GRPCRoute"
-    },
-    {
-      "kind": "GRPCRoute",
-      "path": "/apis/gateway.networking.k8s.io/v1alpha2/namespaces/{namespace}/grpcroutes/{name}/status",
-      "group": "gateway.networking.k8s.io",
-      "level": "alpha",
-      "tests": [
-        null
-      ],
-      "action": "put",
-      "tested": null,
-      "release": "1.1019100.0",
-      "version": "v1alpha2",
-      "category": "gatewayNetworking",
-      "endpoint": "replaceGatewayNetworkingV1alpha2NamespacedGRPCRouteStatus",
-      "conf_tested": null,
-      "description": "replace status of the specified GRPCRoute"
     },
     {
       "kind": "ReferenceGrant",
@@ -2504,9 +2861,43 @@
       "endpoint": "replaceGatewayNetworkingV1alpha2NamespacedUDPRouteStatus",
       "conf_tested": null,
       "description": "replace status of the specified UDPRoute"
+    },
+    {
+      "kind": "BackendTLSPolicy",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha3/namespaces/{namespace}/backendtlspolicies/{name}",
+      "group": "gateway.networking.k8s.io",
+      "level": "alpha",
+      "tests": [
+        null
+      ],
+      "action": "put",
+      "tested": null,
+      "release": "1.1019100.0",
+      "version": "v1alpha3",
+      "category": "gatewayNetworking",
+      "endpoint": "replaceGatewayNetworkingV1alpha3NamespacedBackendTLSPolicy",
+      "conf_tested": null,
+      "description": "replace the specified BackendTLSPolicy"
+    },
+    {
+      "kind": "BackendTLSPolicy",
+      "path": "/apis/gateway.networking.k8s.io/v1alpha3/namespaces/{namespace}/backendtlspolicies/{name}/status",
+      "group": "gateway.networking.k8s.io",
+      "level": "alpha",
+      "tests": [
+        null
+      ],
+      "action": "put",
+      "tested": null,
+      "release": "1.1019100.0",
+      "version": "v1alpha3",
+      "category": "gatewayNetworking",
+      "endpoint": "replaceGatewayNetworkingV1alpha3NamespacedBackendTLSPolicyStatus",
+      "conf_tested": null,
+      "description": "replace status of the specified BackendTLSPolicy"
     }
   ],
-  "release_date": "2024-07-05T09:57:19",
-  "total endpoints": 135,
-  "tested endpoints": 0
+  "release_date": "2024-07-04T07:18:22",
+  "total endpoints": 154,
+  "tested endpoints": 26
 }
