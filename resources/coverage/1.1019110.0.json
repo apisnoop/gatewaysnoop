@@ -301,7 +301,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "pilot-discovery/1.23-alpha.23fc23c669d0567a029e77fa0fa9ee5dcee094ac"
+        "pilot-discovery/1.23-alpha.2fe649fdfc3980ccacdf7dd6458ef6ebbf4cb518"
       ],
       "action": "list",
       "tested": false,
@@ -760,7 +760,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "pilot-discovery/1.23-alpha.23fc23c669d0567a029e77fa0fa9ee5dcee094ac"
+        "pilot-discovery/1.23-alpha.2fe649fdfc3980ccacdf7dd6458ef6ebbf4cb518"
       ],
       "action": "put",
       "tested": false,
@@ -811,7 +811,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.23-alpha.23fc23c669d0567a029e77fa0fa9ee5dcee094ac"
+        "pilot-discovery/1.23-alpha.2fe649fdfc3980ccacdf7dd6458ef6ebbf4cb518"
       ],
       "action": "post",
       "tested": false,
@@ -1032,7 +1032,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.23-alpha.23fc23c669d0567a029e77fa0fa9ee5dcee094ac"
+        "pilot-discovery/1.23-alpha.2fe649fdfc3980ccacdf7dd6458ef6ebbf4cb518"
       ],
       "action": "list",
       "tested": false,
@@ -1066,7 +1066,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.23-alpha.23fc23c669d0567a029e77fa0fa9ee5dcee094ac"
+        "pilot-discovery/1.23-alpha.2fe649fdfc3980ccacdf7dd6458ef6ebbf4cb518"
       ],
       "action": "list",
       "tested": false,
@@ -1100,7 +1100,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.23-alpha.23fc23c669d0567a029e77fa0fa9ee5dcee094ac"
+        "pilot-discovery/1.23-alpha.2fe649fdfc3980ccacdf7dd6458ef6ebbf4cb518"
       ],
       "action": "list",
       "tested": false,
@@ -1202,7 +1202,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.23-alpha.23fc23c669d0567a029e77fa0fa9ee5dcee094ac"
+        "pilot-discovery/1.23-alpha.2fe649fdfc3980ccacdf7dd6458ef6ebbf4cb518"
       ],
       "action": "list",
       "tested": false,
@@ -1270,7 +1270,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.23-alpha.23fc23c669d0567a029e77fa0fa9ee5dcee094ac"
+        "pilot-discovery/1.23-alpha.2fe649fdfc3980ccacdf7dd6458ef6ebbf4cb518"
       ],
       "action": "patch",
       "tested": false,
@@ -1525,7 +1525,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.23-alpha.23fc23c669d0567a029e77fa0fa9ee5dcee094ac"
+        "pilot-discovery/1.23-alpha.2fe649fdfc3980ccacdf7dd6458ef6ebbf4cb518"
       ],
       "action": "put",
       "tested": false,
@@ -1576,7 +1576,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.23-alpha.23fc23c669d0567a029e77fa0fa9ee5dcee094ac"
+        "pilot-discovery/1.23-alpha.2fe649fdfc3980ccacdf7dd6458ef6ebbf4cb518"
       ],
       "action": "put",
       "tested": false,
@@ -1610,7 +1610,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "pilot-discovery/1.23-alpha.23fc23c669d0567a029e77fa0fa9ee5dcee094ac"
+        "pilot-discovery/1.23-alpha.2fe649fdfc3980ccacdf7dd6458ef6ebbf4cb518"
       ],
       "action": "put",
       "tested": false,
@@ -1712,15 +1712,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "post",
-      "tested": null,
+      "tested": true,
       "release": "1.1019110.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
       "endpoint": "createGatewayNetworkingV1alpha2NamespacedTLSRoute",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "create a TLSRoute"
     },
     {
@@ -1933,15 +1933,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "delete",
-      "tested": null,
+      "tested": true,
       "release": "1.1019110.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1alpha2NamespacedTLSRoute",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "delete a TLSRoute"
     },
     {
@@ -2171,7 +2171,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        "pilot-discovery/1.23-alpha.23fc23c669d0567a029e77fa0fa9ee5dcee094ac"
+        "pilot-discovery/1.23-alpha.2fe649fdfc3980ccacdf7dd6458ef6ebbf4cb518"
       ],
       "action": "list",
       "tested": false,
@@ -2205,7 +2205,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        "pilot-discovery/1.23-alpha.23fc23c669d0567a029e77fa0fa9ee5dcee094ac"
+        "pilot-discovery/1.23-alpha.2fe649fdfc3980ccacdf7dd6458ef6ebbf4cb518"
       ],
       "action": "list",
       "tested": false,
@@ -2239,7 +2239,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        "pilot-discovery/1.23-alpha.23fc23c669d0567a029e77fa0fa9ee5dcee094ac"
+        "pilot-discovery/1.23-alpha.2fe649fdfc3980ccacdf7dd6458ef6ebbf4cb518"
       ],
       "action": "list",
       "tested": false,
@@ -2596,15 +2596,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        null
+        "pilot.test/unknown"
       ],
       "action": "get",
-      "tested": null,
+      "tested": true,
       "release": "1.1019110.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
       "endpoint": "readGatewayNetworkingV1alpha2NamespacedTLSRoute",
-      "conf_tested": null,
+      "conf_tested": true,
       "description": "read the specified TLSRoute"
     },
     {
@@ -2817,15 +2817,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        null
+        "pilot-discovery/1.23-alpha.2fe649fdfc3980ccacdf7dd6458ef6ebbf4cb518"
       ],
       "action": "put",
-      "tested": null,
+      "tested": false,
       "release": "1.1019110.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
       "endpoint": "replaceGatewayNetworkingV1alpha2NamespacedTLSRouteStatus",
-      "conf_tested": null,
+      "conf_tested": false,
       "description": "replace status of the specified TLSRoute"
     },
     {
@@ -2897,7 +2897,7 @@
       "description": "replace status of the specified BackendTLSPolicy"
     }
   ],
-  "release_date": "2024-07-08T03:45:37",
+  "release_date": "2024-07-08T21:55:53",
   "total endpoints": 154,
-  "tested endpoints": 26
+  "tested endpoints": 29
 }

@@ -80,15 +80,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:namespace-controller"
+        null
       ],
       "action": "deletecollection",
-      "tested": false,
+      "tested": null,
       "release": "1.1008100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1CollectionNamespacedGateway",
-      "conf_tested": false,
+      "conf_tested": null,
       "description": "delete collection of Gateway"
     },
     {
@@ -97,15 +97,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:namespace-controller"
+        null
       ],
       "action": "deletecollection",
-      "tested": false,
+      "tested": null,
       "release": "1.1008100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1CollectionNamespacedHTTPRoute",
-      "conf_tested": false,
+      "conf_tested": null,
       "description": "delete collection of HTTPRoute"
     },
     {
@@ -216,23 +216,6 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:namespace-controller"
-      ],
-      "action": "list",
-      "tested": false,
-      "release": "1.1008100.0",
-      "version": "v1",
-      "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1NamespacedGateway",
-      "conf_tested": false,
-      "description": "list objects of kind Gateway"
-    },
-    {
-      "kind": "Gateway",
-      "path": "/apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/gateways",
-      "group": "gateway.networking.k8s.io",
-      "level": "stable",
-      "tests": [
         "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
       ],
       "action": "list",
@@ -250,15 +233,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:namespace-controller"
+        null
       ],
       "action": "list",
-      "tested": false,
+      "tested": null,
       "release": "1.1008100.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "listGatewayNetworkingV1NamespacedHTTPRoute",
-      "conf_tested": false,
+      "conf_tested": null,
       "description": "list objects of kind HTTPRoute"
     },
     {
@@ -1372,15 +1355,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:namespace-controller"
+        null
       ],
       "action": "deletecollection",
-      "tested": false,
+      "tested": null,
       "release": "1.1008100.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1alpha2CollectionNamespacedBackendTLSPolicy",
-      "conf_tested": false,
+      "conf_tested": null,
       "description": "delete collection of BackendTLSPolicy"
     },
     {
@@ -1457,15 +1440,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:namespace-controller"
+        null
       ],
       "action": "deletecollection",
-      "tested": false,
+      "tested": null,
       "release": "1.1008100.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1alpha2CollectionNamespacedUDPRoute",
-      "conf_tested": false,
+      "conf_tested": null,
       "description": "delete collection of UDPRoute"
     },
     {
@@ -1542,15 +1525,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        "gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"
+        null
       ],
       "action": "delete",
-      "tested": true,
+      "tested": null,
       "release": "1.1008100.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
       "endpoint": "deleteGatewayNetworkingV1alpha2NamespacedTLSRoute",
-      "conf_tested": true,
+      "conf_tested": null,
       "description": "delete a TLSRoute"
     },
     {
@@ -1610,15 +1593,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:namespace-controller"
+        null
       ],
       "action": "list",
-      "tested": false,
+      "tested": null,
       "release": "1.1008100.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
       "endpoint": "listGatewayNetworkingV1alpha2NamespacedBackendTLSPolicy",
-      "conf_tested": false,
+      "conf_tested": null,
       "description": "list objects of kind BackendTLSPolicy"
     },
     {
@@ -1695,15 +1678,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:namespace-controller"
+        null
       ],
       "action": "list",
-      "tested": false,
+      "tested": null,
       "release": "1.1008100.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
       "endpoint": "listGatewayNetworkingV1alpha2NamespacedUDPRoute",
-      "conf_tested": false,
+      "conf_tested": null,
       "description": "list objects of kind UDPRoute"
     },
     {
@@ -2336,7 +2319,7 @@
       "description": "replace status of the specified UDPRoute"
     }
   ],
-  "release_date": "2024-07-08T03:26:13",
+  "release_date": "2024-07-08T21:32:31",
   "total endpoints": 135,
-  "tested endpoints": 25
+  "tested endpoints": 24
 }

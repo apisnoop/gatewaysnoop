@@ -228,20 +228,37 @@
       "description": "list objects of kind GatewayClass"
     },
     {
+      "kind": "GatewayClass",
+      "path": "/apis/gateway.networking.k8s.io/v1/gatewayclasses",
+      "group": "gateway.networking.k8s.io",
+      "level": "stable",
+      "tests": [
+        "cilium-operator-generic/1.15.6 a09e05e6 2024-06-08T21:31:01+00:00 go version go1.21.11 linux/amd64"
+      ],
+      "action": "list",
+      "tested": false,
+      "release": "1.1008110.0",
+      "version": "v1",
+      "category": "gatewayNetworking",
+      "endpoint": "listGatewayNetworkingV1GatewayClass",
+      "conf_tested": false,
+      "description": "list objects of kind GatewayClass"
+    },
+    {
       "kind": "Gateway",
       "path": "/apis/gateway.networking.k8s.io/v1/gateways",
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        null
+        "cilium-operator-generic/1.15.6 a09e05e6 2024-06-08T21:31:01+00:00 go version go1.21.11 linux/amd64"
       ],
       "action": "list",
-      "tested": null,
+      "tested": false,
       "release": "1.1008110.0",
       "version": "v1",
       "category": "gatewayNetworking",
       "endpoint": "listGatewayNetworkingV1GatewayForAllNamespaces",
-      "conf_tested": null,
+      "conf_tested": false,
       "description": "list objects of kind Gateway"
     },
     {
@@ -981,15 +998,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        null
+        "cilium-operator-generic/1.15.6 a09e05e6 2024-06-08T21:31:01+00:00 go version go1.21.11 linux/amd64"
       ],
       "action": "list",
-      "tested": null,
+      "tested": false,
       "release": "1.1008110.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "listGatewayNetworkingV1beta1GatewayForAllNamespaces",
-      "conf_tested": null,
+      "conf_tested": false,
       "description": "list objects of kind Gateway"
     },
     {
@@ -1066,15 +1083,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        null
+        "cilium-operator-generic/1.15.6 a09e05e6 2024-06-08T21:31:01+00:00 go version go1.21.11 linux/amd64"
       ],
       "action": "list",
-      "tested": null,
+      "tested": false,
       "release": "1.1008110.0",
       "version": "v1beta1",
       "category": "gatewayNetworking",
       "endpoint": "listGatewayNetworkingV1beta1ReferenceGrantForAllNamespaces",
-      "conf_tested": null,
+      "conf_tested": false,
       "description": "list objects of kind ReferenceGrant"
     },
     {
@@ -1967,15 +1984,15 @@
       "group": "gateway.networking.k8s.io",
       "level": "alpha",
       "tests": [
-        null
+        "cilium-operator-generic/1.15.6 a09e05e6 2024-06-08T21:31:01+00:00 go version go1.21.11 linux/amd64"
       ],
       "action": "list",
-      "tested": null,
+      "tested": false,
       "release": "1.1008110.0",
       "version": "v1alpha2",
       "category": "gatewayNetworking",
       "endpoint": "listGatewayNetworkingV1alpha2TLSRouteForAllNamespaces",
-      "conf_tested": null,
+      "conf_tested": false,
       "description": "list objects of kind TLSRoute"
     },
     {
@@ -2642,7 +2659,7 @@
       "description": "replace status of the specified BackendTLSPolicy"
     }
   ],
-  "release_date": "2024-07-08T03:32:02",
+  "release_date": "2024-07-08T21:38:13",
   "total endpoints": 154,
   "tested endpoints": 25
 }

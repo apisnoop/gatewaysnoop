@@ -29,7 +29,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "kubectl/v1.30.1 (linux/amd64) kubernetes/6911225"
+        "kubectl/v1.30.2 (linux/amd64) kubernetes/3968350"
       ],
       "action": "post",
       "tested": false,
@@ -216,7 +216,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "kubectl/v1.30.1 (linux/amd64) kubernetes/6911225"
+        "kubectl/v1.30.2 (linux/amd64) kubernetes/3968350"
       ],
       "action": "list",
       "tested": false,
@@ -233,7 +233,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
-        "kubectl/v1.30.1 (linux/amd64) kubernetes/6911225"
+        "contour/v0.0.0 (linux/amd64) kubernetes/$Format"
       ],
       "action": "list",
       "tested": false,
@@ -251,23 +251,6 @@
       "level": "stable",
       "tests": [
         "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/metadata-informers"
-      ],
-      "action": "list",
-      "tested": false,
-      "release": "1.1009100.0",
-      "version": "v1",
-      "category": "gatewayNetworking",
-      "endpoint": "listGatewayNetworkingV1GatewayForAllNamespaces",
-      "conf_tested": false,
-      "description": "list objects of kind Gateway"
-    },
-    {
-      "kind": "Gateway",
-      "path": "/apis/gateway.networking.k8s.io/v1/gateways",
-      "group": "gateway.networking.k8s.io",
-      "level": "stable",
-      "tests": [
-        "contour/v0.0.0 (linux/amd64) kubernetes/$Format"
       ],
       "action": "list",
       "tested": false,
@@ -454,6 +437,23 @@
       "group": "gateway.networking.k8s.io",
       "level": "stable",
       "tests": [
+        "kubectl/v1.30.2 (linux/amd64) kubernetes/3968350"
+      ],
+      "action": "get",
+      "tested": false,
+      "release": "1.1009100.0",
+      "version": "v1",
+      "category": "gatewayNetworking",
+      "endpoint": "readGatewayNetworkingV1GatewayClass",
+      "conf_tested": false,
+      "description": "read the specified GatewayClass"
+    },
+    {
+      "kind": "GatewayClass",
+      "path": "/apis/gateway.networking.k8s.io/v1/gatewayclasses/{name}",
+      "group": "gateway.networking.k8s.io",
+      "level": "stable",
+      "tests": [
         "conformance.test/v0.0.0 (linux/amd64) kubernetes/$Format"
       ],
       "action": "get",
@@ -463,23 +463,6 @@
       "category": "gatewayNetworking",
       "endpoint": "readGatewayNetworkingV1GatewayClass",
       "conf_tested": true,
-      "description": "read the specified GatewayClass"
-    },
-    {
-      "kind": "GatewayClass",
-      "path": "/apis/gateway.networking.k8s.io/v1/gatewayclasses/{name}",
-      "group": "gateway.networking.k8s.io",
-      "level": "stable",
-      "tests": [
-        "kubectl/v1.30.1 (linux/amd64) kubernetes/6911225"
-      ],
-      "action": "get",
-      "tested": false,
-      "release": "1.1009100.0",
-      "version": "v1",
-      "category": "gatewayNetworking",
-      "endpoint": "readGatewayNetworkingV1GatewayClass",
-      "conf_tested": false,
       "description": "read the specified GatewayClass"
     },
     {
@@ -981,7 +964,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "contour/v0.0.0 (linux/amd64) kubernetes/$Format"
+        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/metadata-informers"
       ],
       "action": "list",
       "tested": false,
@@ -998,7 +981,7 @@
       "group": "gateway.networking.k8s.io",
       "level": "beta",
       "tests": [
-        "kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/metadata-informers"
+        "contour/v0.0.0 (linux/amd64) kubernetes/$Format"
       ],
       "action": "list",
       "tested": false,
@@ -2506,7 +2489,7 @@
       "description": "replace status of the specified UDPRoute"
     }
   ],
-  "release_date": "2024-07-07T21:47:29",
+  "release_date": "2024-07-08T21:43:15",
   "total endpoints": 135,
   "tested endpoints": 19
 }
