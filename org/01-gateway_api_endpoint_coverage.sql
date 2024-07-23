@@ -15,7 +15,7 @@ select release, endpoint, level, category, path, description,
   left join testing.audit_event using (endpoint, release)
  where deprecated is false
        and k8s_group = 'gateway.networking.k8s.io'
- group by release, endpoint, level, category, path, description, useragent, suite_test, kind, version, k8s_group, k8s_action
+ group by release, endpoint, level, category, path, description, useragent, kind, version, k8s_group, k8s_action
  order by level desc, endpoint;
 commit;
 
@@ -25,10 +25,8 @@ commit;
 -- #+begin_example
 -- BEGIN
 -- apisnoop=*# DROP VIEW
--- apisnoop=*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# ERROR:  column "suite_test" does not exist
--- LINE 16: ...t, level, category, path, description, useragent, suite_test...
---                                                               ^
--- apisnoop=!# ROLLBACK
+-- apisnoop=*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# CREATE VIEW
+-- apisnoop=*# COMMIT
 -- #+end_example
 
 -- create a function to produce a JSON formatted output
