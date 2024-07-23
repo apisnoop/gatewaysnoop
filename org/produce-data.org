@@ -1,0 +1,383 @@
+#+title: Produce Data
+#+PROPERTY: header-args:sql-mode+ :product postgres :wrap "example"
+
+* Generate data for gateway-api endpoint coverage
+
+find the version which is currently set
+
+#+begin_src sql-mode
+select distinct release::text from open_api;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+ release
+---------
+ live
+(1 row)
+
+#+end_example
+
+found the version in audit event
+
+#+begin_src sql-mode
+select distinct release from audit_event;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+ release
+---------
+(0 rows)
+
+#+end_example
+
+but release is missing here.
+
+find the verison in the testing audit event table
+
+#+begin_src sql-mode
+select distinct release from testing.audit_event;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+ release
+---------
+ live
+(1 row)
+
+#+end_example
+
+discover which useragent was used to hit a gateway-api endpoint
+
+#+begin_src sql-mode
+begin;
+select endpoint, useragent
+from testing.audit_event
+where endpoint ilike '%gatewaynetworking%'
+and useragent SIMILAR TO '(gateway-api-conformance.test)%'
+limit 10;
+rollback;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*#                     endpoint                     |                                                useragent
+-------------------------------------------------+----------------------------------------------------------------------------------------------------------
+ createGatewayNetworkingV1NamespacedGateway      | gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway
+ readGatewayNetworkingV1NamespacedGateway        | gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway
+ createGatewayNetworkingV1NamespacedGateway      | gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway
+ readGatewayNetworkingV1alpha2NamespacedTLSRoute | gateway-api-conformance.test::v1.2.0-dev::TLSRouteInvalidReferenceGrant::Gateway,TLSRoute,ReferenceGrant
+ readGatewayNetworkingV1NamespacedGateway        | gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway
+ createGatewayNetworkingV1NamespacedGateway      | gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway
+ readGatewayNetworkingV1NamespacedGateway        | gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway
+ readGatewayNetworkingV1NamespacedGateway        | gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway
+ createGatewayNetworkingV1NamespacedGateway      | gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway
+ readGatewayNetworkingV1NamespacedGateway        | gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway
+(10 rows)
+
+apisnoop=*# ROLLBACK
+#+end_example
+
+discover the gateway-api endpoints hit with conformance test metadata, based off previous Istiosnoop
+
+#+begin_src sql-mode
+begin;
+select release, endpoint, level, category, path, description,
+       k8s_kind as kind,
+       k8s_version as version,
+       k8s_group as group,
+       k8s_action as action,
+       (count(test_hit) filter(where test_hit is true)>0) as tested,
+       (count(conf_test_hit) filter(where conf_test_hit is true)>0) as conf_tested,
+       array_agg(distinct test) as tests
+  from      open_api
+  left join testing.audit_event using (endpoint, release)
+ where deprecated is false
+       and endpoint ilike '%gatewaynetworking%'
+ group by release, endpoint, level, category, path, description, kind, version, k8s_group, k8s_action
+ order by level desc, endpoint
+          limit 10;
+rollback;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*#  release |                        endpoint                        |  level   |     category      |                                   path                                    |            description            |     kind     | version |           group           |      action      | tested | conf_tested |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             tests
+---------+--------------------------------------------------------+----------+-------------------+---------------------------------------------------------------------------+-----------------------------------+--------------+---------+---------------------------+------------------+--------+-------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ live    | createGatewayNetworkingV1GatewayClass                  | standard | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/gatewayclasses                         | create a GatewayClass             | GatewayClass | v1      | gateway.networking.k8s.io | post             | f      | f           | {gateway-api-conformance.test::v1.2.0-dev::GatewayClassObservedGenerationBump::Gateway}
+ live    | createGatewayNetworkingV1NamespacedGateway             | standard | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/gateways        | create a Gateway                  | Gateway      | v1      | gateway.networking.k8s.io | post             | f      | f           | {gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway,gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidTLSConfiguration::Gateway,gateway-api-conformance.test::v1.2.0-dev::GatewayModifyListeners::Gateway,gateway-api-conformance.test::v1.2.0-dev::GatewayObservedGenerationBump::Gateway,"gateway-api-conformance.test::v1.2.0-dev::GatewaySecretInvalidReferenceGrant::Gateway,ReferenceGrant","gateway-api-conformance.test::v1.2.0-dev::GatewaySecretMissingReferenceGrant::Gateway,ReferenceGrant","gateway-api-conformance.test::v1.2.0-dev::GatewaySecretReferenceGrantAllInNamespace::Gateway,ReferenceGrant","gateway-api-conformance.test::v1.2.0-dev::GatewaySecretReferenceGrantSpecific::Gateway,ReferenceGrant","gateway-api-conformance.test::v1.2.0-dev::GatewayWithAttachedRoutes::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteDisallowedKind::Gateway,HTTPRoute,TLSRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteHostnameIntersection::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteListenerHostnameMatching::Gateway,HTTPRoute"}
+ live    | createGatewayNetworkingV1NamespacedGRPCRoute           | standard | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/grpcroutes      | create a GRPCRoute                | GRPCRoute    | v1      | gateway.networking.k8s.io | post             | f      | f           | {NULL}
+ live    | createGatewayNetworkingV1NamespacedHTTPRoute           | standard | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/httproutes      | create a HTTPRoute                | HTTPRoute    | v1      | gateway.networking.k8s.io | post             | f      | f           | {gateway-api-conformance.test::v1.2.0-dev::GatewayModifyListeners::Gateway,"gateway-api-conformance.test::v1.2.0-dev::GatewayWithAttachedRoutes::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteCrossNamespace::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteDisallowedKind::Gateway,HTTPRoute,TLSRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteExactPathMatching::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteHeaderMatching::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteHostnameIntersection::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteHTTPSListener::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteInvalidBackendRefUnknownKind::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteInvalidCrossNamespaceBackendRef::Gateway,HTTPRoute,ReferenceGrant","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteInvalidCrossNamespaceParentRef::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteInvalidNonExistentBackendRef::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteInvalidParentRefNotMatchingListenerPort::Gateway,HTTPRoute,HTTPRouteDestinationPortMatching","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteInvalidParentRefNotMatchingSectionName::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteInvalidReferenceGrant::Gateway,HTTPRoute,ReferenceGrant","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteListenerHostnameMatching::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteMatchingAcrossRoutes::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteMatching::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteMethodMatching::Gateway,HTTPRoute,HTTPRouteMethodMatching","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteObservedGenerationBump::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRoutePartiallyInvalidViaInvalidReferenceGrant::Gateway,HTTPRoute,ReferenceGrant","gateway-api-conformance.test::v1.2.0-dev::HTTPRoutePathMatchOrder::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteQueryParamMatching::Gateway,HTTPRoute,HTTPRouteQueryParamMatching","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRedirectHostAndStatus::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRedirectPath::Gateway,HTTPRoute,HTTPRoutePathRedirect","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRedirectPort::Gateway,HTTPRoute,HTTPRoutePortRedirect","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRedirectScheme::Gateway,HTTPRoute,HTTPRouteSchemeRedirect","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteReferenceGrant::Gateway,HTTPRoute,ReferenceGrant","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRequestHeaderModifier::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRequestMirror::Gateway,HTTPRoute,HTTPRouteRequestMirror","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRequestMultipleMirrors::Gateway,HTTPRoute,HTTPRouteRequestMirror,HTTPRouteRequestMultipleMirrors","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteResponseHeaderModifier::Gateway,HTTPRoute,HTTPRouteResponseHeaderModification","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRewriteHost::Gateway,HTTPRoute,HTTPRouteHostRewrite","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteRewritePath::Gateway,HTTPRoute,HTTPRoutePathRewrite","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteServiceTypes::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteSimpleSameNamespace::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteWeight::Gateway,HTTPRoute"}
+ live    | deleteGatewayNetworkingV1CollectionGatewayClass        | standard | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/gatewayclasses                         | delete collection of GatewayClass | GatewayClass | v1      | gateway.networking.k8s.io | deletecollection | f      | f           | {NULL}
+ live    | deleteGatewayNetworkingV1CollectionNamespacedGateway   | standard | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/gateways        | delete collection of Gateway      | Gateway      | v1      | gateway.networking.k8s.io | deletecollection | f      | f           | {"kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:namespace-controller"}
+ live    | deleteGatewayNetworkingV1CollectionNamespacedGRPCRoute | standard | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/grpcroutes      | delete collection of GRPCRoute    | GRPCRoute    | v1      | gateway.networking.k8s.io | deletecollection | f      | f           | {"kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:namespace-controller"}
+ live    | deleteGatewayNetworkingV1CollectionNamespacedHTTPRoute | standard | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/httproutes      | delete collection of HTTPRoute    | HTTPRoute    | v1      | gateway.networking.k8s.io | deletecollection | f      | f           | {"kube-controller-manager/v1.30.0 (linux/amd64) kubernetes/7c48c2b/system:serviceaccount:kube-system:namespace-controller"}
+ live    | deleteGatewayNetworkingV1GatewayClass                  | standard | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/gatewayclasses/{name}                  | delete a GatewayClass             | GatewayClass | v1      | gateway.networking.k8s.io | delete           | f      | f           | {gateway-api-conformance.test::v1.2.0-dev::GatewayClassObservedGenerationBump::Gateway}
+ live    | deleteGatewayNetworkingV1NamespacedGateway             | standard | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/gateways/{name} | delete a Gateway                  | Gateway      | v1      | gateway.networking.k8s.io | delete           | f      | f           | {gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidRouteKind::Gateway,gateway-api-conformance.test::v1.2.0-dev::GatewayInvalidTLSConfiguration::Gateway,gateway-api-conformance.test::v1.2.0-dev::GatewayModifyListeners::Gateway,gateway-api-conformance.test::v1.2.0-dev::GatewayObservedGenerationBump::Gateway,"gateway-api-conformance.test::v1.2.0-dev::GatewaySecretInvalidReferenceGrant::Gateway,ReferenceGrant","gateway-api-conformance.test::v1.2.0-dev::GatewaySecretMissingReferenceGrant::Gateway,ReferenceGrant","gateway-api-conformance.test::v1.2.0-dev::GatewaySecretReferenceGrantAllInNamespace::Gateway,ReferenceGrant","gateway-api-conformance.test::v1.2.0-dev::GatewaySecretReferenceGrantSpecific::Gateway,ReferenceGrant","gateway-api-conformance.test::v1.2.0-dev::GatewayWithAttachedRoutes::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteDisallowedKind::Gateway,HTTPRoute,TLSRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteHostnameIntersection::Gateway,HTTPRoute","gateway-api-conformance.test::v1.2.0-dev::HTTPRouteListenerHostnameMatching::Gateway,HTTPRoute"}
+(10 rows)
+
+apisnoop=*# ROLLBACK
+#+end_example
+
+
+the results are saying that the endpoints are not tested or conformance tested. This is a problem.
+
+Now checking for useragent like Istio's pilot like [[https://github.com/kubernetes-sigs/apisnoop/blob/main/apps/snoopdb/postgres/initdb/301_fn_load_audit_events.sql#L55-L56][this]]. It appears to come up with results that have tested and conformance tested values.
+
+#+begin_src sql-mode
+begin;
+select release, endpoint, level, category, path, description,
+       k8s_kind as kind,
+       k8s_version as version,
+       k8s_group as group,
+       k8s_action as action,
+       useragent SIMILAR TO '(pilot.test|gateway-api.test|conformance.test|live)%' as tested,
+       useragent SIMILAR TO '(pilot.test|gateway-api.test|conformance.test|live)%' as conf_tested,
+       array_agg(distinct test) as tests
+  from      open_api
+  left join testing.audit_event using (endpoint, release)
+ where deprecated is false
+       and (k8s_group = 'gateway.networking.k8s.io'
+       and useragent SIMILAR TO '(pilot.test|gateway-api.test|conformance.test|live)%')
+ group by release, endpoint, level, category, path, description, useragent, kind, version, k8s_group, k8s_action
+ order by level desc, endpoint
+          limit 10;
+rollback;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop(*# apisnoop-*# apisnoop-*# apisnoop-*#  release |                   endpoint                   | level  |     category      |                                    path                                     |                 description                 |     kind     | version |           group           | action | tested | conf_tested |                            tests
+---------+----------------------------------------------+--------+-------------------+-----------------------------------------------------------------------------+---------------------------------------------+--------------+---------+---------------------------+--------+--------+-------------+--------------------------------------------------------------
+ live    | createGatewayNetworkingV1GatewayClass        | stable | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/gatewayclasses                           | create a GatewayClass                       | GatewayClass | v1      | gateway.networking.k8s.io | post   | t      | t           | {"gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"}
+ live    | createGatewayNetworkingV1NamespacedGateway   | stable | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/gateways          | create a Gateway                            | Gateway      | v1      | gateway.networking.k8s.io | post   | t      | t           | {"gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"}
+ live    | createGatewayNetworkingV1NamespacedHTTPRoute | stable | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/httproutes        | create a HTTPRoute                          | HTTPRoute    | v1      | gateway.networking.k8s.io | post   | t      | t           | {"gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"}
+ live    | deleteGatewayNetworkingV1GatewayClass        | stable | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/gatewayclasses/{name}                    | delete a GatewayClass                       | GatewayClass | v1      | gateway.networking.k8s.io | delete | t      | t           | {"gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"}
+ live    | deleteGatewayNetworkingV1NamespacedGateway   | stable | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/gateways/{name}   | delete a Gateway                            | Gateway      | v1      | gateway.networking.k8s.io | delete | t      | t           | {"gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"}
+ live    | deleteGatewayNetworkingV1NamespacedHTTPRoute | stable | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/httproutes/{name} | delete a HTTPRoute                          | HTTPRoute    | v1      | gateway.networking.k8s.io | delete | t      | t           | {"gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"}
+ live    | listGatewayNetworkingV1NamespacedGateway     | stable | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/gateways          | list objects of kind Gateway                | Gateway      | v1      | gateway.networking.k8s.io | list   | t      | t           | {"gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"}
+ live    | patchGatewayNetworkingV1GatewayClass         | stable | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/gatewayclasses/{name}                    | partially update the specified GatewayClass | GatewayClass | v1      | gateway.networking.k8s.io | patch  | t      | t           | {"gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"}
+ live    | patchGatewayNetworkingV1NamespacedGateway    | stable | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/gateways/{name}   | partially update the specified Gateway      | Gateway      | v1      | gateway.networking.k8s.io | patch  | t      | t           | {"gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"}
+ live    | patchGatewayNetworkingV1NamespacedHTTPRoute  | stable | gatewayNetworking | /apis/gateway.networking.k8s.io/v1/namespaces/{namespace}/httproutes/{name} | partially update the specified HTTPRoute    | HTTPRoute    | v1      | gateway.networking.k8s.io | patch  | t      | t           | {"gateway-api.test/v0.0.0 (linux/amd64) kubernetes/$Format"}
+(10 rows)
+
+apisnoop=*# ROLLBACK
+#+end_example
+
+
+create a view for pulling out the data. This creates a view to pull the data from
+
+#+begin_src sql-mode
+begin;
+create or replace view gateway_api_endpoint_coverage as
+select release, endpoint, level, category, path, description,
+       k8s_kind as kind,
+       k8s_version as version,
+       k8s_group as group,
+       k8s_action as action,
+       useragent SIMILAR TO '(pilot.test|gateway-api.test|conformance.test|live)%' as tested,
+       useragent SIMILAR TO '(pilot.test|gateway-api.test|conformance.test|live)%' as conf_tested,
+       array_agg(distinct test) as tests
+  from      open_api
+  left join testing.audit_event using (endpoint, release)
+ where deprecated is false
+       and k8s_group = 'gateway.networking.k8s.io'
+       and useragent SIMILAR TO '(pilot.test|gateway-api.test|conformance.test|live)%'
+ group by release, endpoint, level, category, path, description, useragent, kind, version, k8s_group, k8s_action
+ order by level desc, endpoint;
+select count(*) from gateway_api_endpoint_coverage;
+commit;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# CREATE VIEW
+apisnoop=*#  count
+-------
+    25
+(1 row)
+
+apisnoop=*# COMMIT
+#+end_example
+
+there should be ~159 endpoints (create, replace, patch, list, delete, etc...), not 20.
+
+#+begin_src sql-mode
+select count(distinct(endpoint)) from testing.audit_event where endpoint ilike '%gatewaynetworking%';
+#+end_src
+
+#+RESULTS:
+#+begin_example
+ count
+-------
+    46
+(1 row)
+
+#+end_example
+
+now removing the filter for useragent, 158 endpoints show up
+
+#+begin_src sql-mode
+begin;
+create or replace view gateway_api_endpoint_coverage as
+select release, endpoint, level, category, path, description,
+       k8s_kind as kind,
+       k8s_version as version,
+       k8s_group as group,
+       k8s_action as action,
+       useragent SIMILAR TO '(pilot.test|gateway-api.test|conformance.test|live)%' as tested,
+       useragent SIMILAR TO '(pilot.test|gateway-api.test|conformance.test|live)%' as conf_tested,
+       array_agg(distinct test) as tests
+  from      open_api
+  left join testing.audit_event using (endpoint, release)
+ where deprecated is false
+       and k8s_group = 'gateway.networking.k8s.io'
+ group by release, endpoint, level, category, path, description, useragent, kind, version, k8s_group, k8s_action
+ order by level desc, endpoint;
+select count(*) from gateway_api_endpoint_coverage;
+commit;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# CREATE VIEW
+apisnoop=*#  count
+-------
+   156
+(1 row)
+
+apisnoop=*# COMMIT
+#+end_example
+
+here, there are 57 showing up after running the gateway-api conformance tests.
+
+#+begin_src sql-mode
+select count(distinct(endpoint)) from gateway_api_endpoint_coverage where conf_tested <> true or conf_tested is not null;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+ count
+-------
+    59
+(1 row)
+
+#+end_example
+
+get list of tests
+
+#+begin_src sql-mode
+begin;
+select array_agg(distinct split_part(test, '::', 3)) as tests from testing.audit_event where useragent similar to '(gateway-api-conformance.test)%';
+rollback;
+#+end_src
+
+#+begin_src sql-mode :tangle ./01-gateway_api_endpoint_coverage.sql
+begin;
+drop view if exists gateway_api_endpoint_coverage;
+create view gateway_api_endpoint_coverage as
+select release, endpoint, level, category, path, description,
+       k8s_kind as kind,
+       k8s_version as version,
+       k8s_group as group,
+       k8s_action as action,
+       useragent similar to '(gateway-api-conformance.test|pilot.test|gateway-api.test|conformance.test|live)%' as tested,
+       useragent similar to '(gateway-api-conformance.test|pilot.test|gateway-api.test|conformance.test|live)%' as conf_tested,
+       array_agg(distinct split_part(test, '::', 3)) as tests,
+       split_part(useragent, '::', 2) as gateway_version,
+       string_to_array(split_part(useragent, '::', 4), ',') as suite_test_features
+  from      open_api
+  left join testing.audit_event using (endpoint, release)
+ where deprecated is false
+       and k8s_group = 'gateway.networking.k8s.io'
+ group by release, endpoint, level, category, path, description, useragent, kind, version, k8s_group, k8s_action
+ order by level desc, endpoint;
+commit;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*# DROP VIEW
+apisnoop=*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# apisnoop-*# CREATE VIEW
+apisnoop=*# COMMIT
+#+end_example
+
+create a function to produce a JSON formatted output
+
+#+begin_src sql-mode :tangle ./01-gateway_api_endpoint_coverage.sql
+begin;
+create or replace function generate_latest_gateway_api_coverage_json()
+returns json as $$
+declare latest_release varchar;
+begin
+select release into latest_release from testing.audit_event limit 1;
+return(
+select jsonb_pretty(row_to_json(c)::jsonb) from (
+    select open_api.release, open_api.release_date, open_api.spec,
+        count(distinct ec.endpoint)  as "total endpoints",
+        count(distinct ec.endpoint) filter (where ec.tested is true)  as "tested endpoints",
+        (select array_agg(source) from (select source from audit_event where release = latest_release group by source) s) as sources,
+        (select array_agg(row_to_json(gateway_api_endpoint_coverage)) from gateway_api_endpoint_coverage where release = latest_release and endpoint is not null) as endpoints,
+        (select array_agg(row_to_json(audit_event_test)) from audit_event_test where release = latest_release) as tests
+    from open_api
+    join gateway_api_endpoint_coverage ec using(release)
+    where open_api.release = latest_release
+    group by open_api.release, open_api.release_date, open_api.spec) c);
+end;
+$$ language plpgsql;
+
+commit;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*# apisnoop-*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# apisnoop$*# CREATE FUNCTION
+apisnoop=*# apisnoop=*# COMMIT
+#+end_example
+
+write the output of ~generate_latest_gateway_api_coverage_json()~ to ~/tmp/coverage/gateway-api.json~
+
+#+begin_src sql-mode :tangle ./01-gateway_api_endpoint_coverage.sql
+begin;
+ \! mkdir -p /tmp/coverage
+ \! rm -f /tmp/coverage/gateway-api.json
+ \gset
+ \set output_file '/tmp/coverage/gateway-api.json'
+ \t
+ \a
+ \o :output_file
+   select * from generate_latest_gateway_api_coverage_json();
+ \o
+ \a
+ \t
+commit;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BEGIN
+apisnoop=*# apisnoop=*# apisnoop=*# WARNING:  there is already a transaction in progress
+BEGIN
+apisnoop=*# apisnoop=*# Tuples only is on.
+apisnoop=*# Output format is unaligned.
+apisnoop=*# apisnoop=*# apisnoop=*# apisnoop=*# Output format is aligned.
+apisnoop=*# Tuples only is off.
+apisnoop=*# COMMIT
+#+end_example
+
+* Implementations
+
+generate data for implementations
+
+#+begin_src shell
+bash -x ./runner.sh
+#+end_src
